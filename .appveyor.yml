@@ -1,0 +1,57 @@
+os: Visual Studio 2015
+
+environment:
+  global:
+    #cargoflags:
+    VS: C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat
+    MSYS2_PATH: C:/msys64
+  matrix:
+### MSVC Toolchains ###
+  # Nightly 64-bit MSVC
+    - channel: nightly
+      target: x86_64-pc-windows-msvc
+      ARCH: amd64
+      #cargoflags: --features "unstable"
+  # Nightly 32-bit MSVC
+    - channel: nightly
+      target: i686-pc-windows-msvc
+      ARCH: x86
+      #cargoflags: --features "unstable"
+
+### GNU Toolchains ###
+  # Nightly 64-bit GNU
+    - channel: nightly
+      target: x86_64-pc-windows-gnu
+      MSYS_BITS: 64
+      #cargoflags: --features "unstable"
+  # Nightly 32-bit GNU
+    - channel: nightly
+      target: i686-pc-windows-gnu
+      MSYS_BITS: 32
+      #cargoflags: --features "unstable"
+
+
+matrix:
+    allow_failures:
+      - channel: nightly
+
+install:
+  - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
+  - rustup-init -yv --default-toolchain %channel% --default-host %target%
+  - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
+  - if defined MSYS_BITS set PATH=%PATH%;C:\msys64\mingw%MSYS_BITS%\bin;C:\msys64\usr\bin
+  - rustc -vV
+  - cargo -vV
+
+  - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"'
+  - '%MSYS2_PATH%\usr\bin\bash -lc "pacman --noconfirm -Syuu"'
+
+  - if defined VS call "%VS%" %ARCH%
+
+  - set PATH=C:\msys64\usr\bin;%PATH%
+
+build_script:
+    - cargo build --verbose %cargoflags%
+
+test_script:
+    - cargo test --verbose %cargoflags%
