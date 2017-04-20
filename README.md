@@ -3,6 +3,11 @@
 Lua 5.3 parser written with nom
 
 
+# TODO
+[ ] Different integer and floating point values (i32, f32)
+[ ] Better syntax errors
+
+
 ## License
 
 nom-lua is licensed under GPL General Public License 2.0 only with a Linking exception

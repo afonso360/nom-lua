@@ -25,6 +25,7 @@ include = [
 
 [dependencies]
 nom = "^2.2"
+hexf = "0.1.0"
 
 [lib]
 crate-type = ["rlib", "dylib"]

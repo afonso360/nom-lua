@@ -23,7 +23,8 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, PartialEq)]
 pub enum ASTNode {
-    Value(i64),
+    Integer(i64),
+    Float(f64),
     Paren(Box<ASTNode>),
 
     // ArithmeticOps
@@ -68,7 +69,8 @@ impl Display for ASTNode {
     fn fmt(&self, format: &mut Formatter) -> fmt::Result {
         use self::ASTNode::*;
         match *self {
-            Value(val) => write!(format, "{}", val),
+            Integer(val) => write!(format, "{}", val),
+            Float(val) => write!(format, "{}f", val),
             Paren(ref expr) => write!(format, "({})", expr),
             // ArithmeticOps
             Add(ref left, ref right) => write!(format, "({} + {})", left, right),
