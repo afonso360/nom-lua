@@ -86,20 +86,5 @@ pub mod number;
 pub mod exp;
 pub mod string;
 //pub mod function;
-
-#[cfg(test)]
-pub fn exec_repl() {
-    use std::io::{BufRead, Write};
-    let stdin = std::io::stdin();
-    let stdout = std::io::stdout();
-    for line in stdin.lock().lines() {
-        if let nom::IResult::Done(_, string) =
-            op::parse_op(line.expect("Failed to read line").as_bytes()) {
-            println!("EVAL: {}", string);
-        } else {
-            println!("ERROR: Parse Error");
-        }
-        print!("> ");
-        stdout.lock().flush().expect("Failed to flush");
-    }
-}
+//
+pub use nom::IResult;

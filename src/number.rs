@@ -107,6 +107,8 @@ mod tests {
     //The tests panic because the macro calls unwrap, otherwise they should fail gracefully
 
     ast_test!(test_parse_int_1, parse_int, "20", ASTNode::Integer(20));
+
+    //TODO: Enable this test
     // Overflowing causes integers to be interperted as floats, thus this should fail
     //ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520");
 
@@ -171,6 +173,7 @@ mod tests {
     ast_invalid!(test_parse_hex_float_20, parse_hex_float, "+20.0");
 
 
+    //TODO: Enable these tests
     //ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
     //ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
     //ast_test!(test_parse_number_3, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
