@@ -76,6 +76,7 @@ pub enum ASTNode {
     Function(Box<ASTNode>, Box<ASTNode>),
 
     ExpList(Box<Vec<ASTNode>>),
+    VarList(Box<Vec<ASTNode>>),
 }
 
 impl Display for ASTNode {
@@ -134,8 +135,9 @@ impl Display for ASTNode {
             //Function
             Function(ref parlist, ref fbody) => write!(format, "function ({}) {}", parlist, fbody),
 
-            //TODO: Make this actually print the explist
+            //TODO: Make this actually print thecontents
             ExpList(ref explist) => write!(format, "(explist)"),
+            VarList(ref varlist) => write!(format, "(varlist)"),
         }
     }
 }

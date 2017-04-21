@@ -83,6 +83,7 @@ pub mod number;
 pub mod exp;
 pub mod string;
 pub mod name;
+pub mod var;
 //pub mod function;
 
 pub use nom::IResult;
