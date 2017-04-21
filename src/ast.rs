@@ -28,6 +28,7 @@ pub enum ASTNode {
     Bool(bool),
     String(String),
     Label(String),
+    Name(String),
     Paren(Box<ASTNode>),
 
     // ArithmeticOps
@@ -75,8 +76,10 @@ pub enum ASTNode {
     // Function
     Function(Box<ASTNode>, Box<ASTNode>),
 
+    // Lists
     ExpList(Box<Vec<ASTNode>>),
     VarList(Box<Vec<ASTNode>>),
+    NameList(Box<Vec<ASTNode>>),
 }
 
 impl Display for ASTNode {
@@ -87,6 +90,7 @@ impl Display for ASTNode {
             Float(val) => write!(format, "{}f", val),
             Bool(val) => write!(format, "{}", val),
             String(ref val) => write!(format, "\"{}\"", val),
+            Name(ref val) => write!(format, "(name {})", val),
             Label(ref val) => write!(format, "::{}::", val),
             Paren(ref expr) => write!(format, "({})", expr),
 
@@ -138,6 +142,7 @@ impl Display for ASTNode {
             //TODO: Make this actually print thecontents
             ExpList(ref explist) => write!(format, "(explist)"),
             VarList(ref varlist) => write!(format, "(varlist)"),
+            NameList(ref namelist) => write!(format, "(namelist)"),
         }
     }
 }
