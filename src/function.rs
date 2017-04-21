@@ -23,16 +23,23 @@ use ast::ASTNode;
 
 // TODO: Needs ws! macros
 
-named!(pub parse_functiondef< ASTNode >,
+named!(pub parse_functiondef<ASTNode>,
        do_parse!(tag!("function") >> f: parse_funcbody >> (ASTNode::Function(f))));
 
-named!(parse_funcbody< ASTNode >, do_parse!(
+named!(pub parse_local_function<ASTNode>, do_parse!(
+           tag!("function")
+        >> ws!(tag!("function"))
+        >> n: parse_name
+        >> f: parse_funcbody
+        >> (ASTNode::NamedFunction(n, f))));
+
+named!(parse_funcbody<ASTNode>, do_parse!(
         tag!("(") >>
         parlist: many0!(parse_parlist) >>
         tag!(")") >>
         block: parse_block >>
-        tag!("end") >> (ASTNode::Function(parlist, block))));
+        tag!("end") >> (ASTNode::FunctionBody(parlist, block))));
 
-named!(parse_parlist< ASTNode >, unimplemented!());
-named!(parse_block< ASTNode >, unimplemented!());
+named!(parse_parlist<ASTNode>, unimplemented!());
+named!(parse_block<ASTNode>, unimplemented!());
 

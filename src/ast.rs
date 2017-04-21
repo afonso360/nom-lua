@@ -79,12 +79,17 @@ pub enum ASTNode {
     TableConstructor(Box<ASTNode>),
 
     // Function
-    Function(Box<ASTNode>, Box<ASTNode>),
+    Function(Box<ASTNode>),
+    FunctionBody(Box<ASTNode>, Box<ASTNode>),
+    NamedFunction(Box<ASTNode>, Box<ASTNode>),
 
     // Lists
     ExpList(Box<Vec<ASTNode>>),
     VarList(Box<Vec<ASTNode>>),
     NameList(Box<Vec<ASTNode>>),
+
+    // Local
+    Local(Box<ASTNode>),
 }
 
 impl Display for ASTNode {
@@ -147,12 +152,17 @@ impl Display for ASTNode {
             TableConstructor(ref fieldlist) => write!(format, "{{ {} }}", fieldlist),
 
             //Function
-            Function(ref parlist, ref fbody) => write!(format, "function ({}) {}", parlist, fbody),
+            Function(ref f) => write!(format, "{}", f),
+            FunctionBody(ref parlist, ref fbody) => write!(format, "function ({}) {}", parlist, fbody),
+            NamedFunction(ref n, ref f) => write!(format, "(named {} {})", n, f),
 
             //TODO: Make this actually print thecontents
             ExpList(ref explist) => write!(format, "(explist)"),
             VarList(ref varlist) => write!(format, "(varlist)"),
             NameList(ref namelist) => write!(format, "(namelist)"),
+
+            //Local
+            Local(ref inner) => write!(format, "local {}", inner),
         }
     }
 }

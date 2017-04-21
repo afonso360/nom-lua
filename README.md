@@ -19,7 +19,7 @@ Lua 5.3 parser written with nom
   - [ ] for (deps exp, block)
   - [ ] for in (deps exp, explist, block)
   - [ ] function (deps funcname)
-  - [ ] local function
+  - [ ] local function (deps block)
   - [ ] local (deps namelist, explist)
 - [ ] retstat
 - [x] label

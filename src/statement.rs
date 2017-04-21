@@ -22,6 +22,7 @@
 
 use ast::ASTNode;
 use name::{parse_label, parse_name};
+//use function::parse_local_function;
 
 named!(parse_goto<ASTNode>, map!(map!(preceded!(tag!("goto"), ws!(parse_name)), Box::new), ASTNode::Goto));
 
@@ -34,6 +35,15 @@ named!(parse_statement<ASTNode>, alt!(
         //functioncall
         parse_label |
         parse_goto
+        //do end (deps block)
+        //while (deps exp, block)
+        //repeat until (deps exp, block)
+        //if (deps exp, block)
+        //for (deps exp, block)
+        //for in (deps exp, explist, block)
+        //function (deps funcname)
+        //parse_local_function
+        //local (deps namelist, explist)
 ));
 
 #[cfg(test)]
