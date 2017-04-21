@@ -28,24 +28,26 @@ use std_unicode;
 //named!(parse_string_bracket< ASTNode >, )
 //named!(parse_string_regular< ASTNode >, )
 
-//named!(parse_byte<char>, alt!(parse_byte_x | parse_byte_d));
+named!(parse_byte<char>, alt!(parse_byte_x | parse_byte_d));
 
-//named!(parse_byte_x<char>, preceded!(tag!("\\x"), tag!("x")));
+named!(parse_byte_x<char>, map!(map_res!(map_res!(
+                preceded!(tag!("\\x"), hex_digit),
+                str::from_utf8),
+            |s| u8::from_str_radix(s, 16)), |i: u8| i as char));
 
 
 
 // TODO: if a decimal escape sequence is to be followed by a digit, it must be expressed using exactly three digits
-named!(parse_byte_d<char>, dbg_dmp!(map!(map_res!(
+// Notice, the fold_many_m_n is not actually enforcing bounds here, because digit recognizes
+// more than one character, but I think this implementation might be usefull for the future
+named!(parse_byte_d<char>, map!(map_res!(
             preceded!(tag!("\\"), fold_many_m_n!(1, 3, digit, String::new(), |mut acc: String, item: &[u8]| {
                 for c in item {
                     acc.push(*c as char);
                 }
                 acc
             })),
-            |s: String| {
-                println!("here: {}", s);
-                s.parse::<u8>()
-            }), |i: u8| i as char)));
+            |s: String| s.parse::<u8>()), |i: u8| i as char));
 
 named!(parse_unicode<char>,
        map_opt!(
@@ -75,4 +77,9 @@ mod tests {
     ast_test!(test_parse_byte_d_5, parse_byte_d, "\\230", '\u{E6}');
     ast_panic_test!(test_parse_byte_d_6, parse_byte_d, "\\256");
 
+    ast_test!(test_parse_byte_x_1, parse_byte_x, "\\x00", '\0');
+    // TODO: This should parse to the rust string "\u{0}0" make this test reflect that
+    ast_test!(test_parse_byte_x_2, parse_byte_x, "\\x000", '\0');
+    ast_test!(test_parse_byte_x_3, parse_byte_x, "\\x23", '\u{23}');
+    ast_test!(test_parse_byte_x_4, parse_byte_x, "\\xFf", '\u{FF}');
 }

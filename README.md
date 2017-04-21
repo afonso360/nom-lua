@@ -4,11 +4,12 @@ Lua 5.3 parser written with nom
 
 
 # TODO
-[ ] Different integer and floating point values (i32, f32)
-[ ] Better syntax errors
-[ ] Fallback to floats on overflow
-[ ] Benchmarks
-[ ] Fuzzing
+- [ ] Different integer and floating point values (i32, f32)
+- [ ] Better syntax errors
+- [ ] Fallback to floats on overflow
+- [ ] Benchmarks
+- [ ] Fuzzing
+- [ ] Change tests to fail instead of panicking
 
 
 ## License
