@@ -26,6 +26,7 @@ pub enum ASTNode {
     Integer(i64),
     Float(f64),
     Bool(bool),
+    String(String),
     Paren(Box<ASTNode>),
 
     // ArithmeticOps
@@ -81,6 +82,7 @@ impl Display for ASTNode {
             Integer(val) => write!(format, "{}", val),
             Float(val) => write!(format, "{}f", val),
             Bool(val) => write!(format, "{}", val),
+            String(ref val) => write!(format, "\"{}\"", val),
             Paren(ref expr) => write!(format, "({})", expr),
 
             // ArithmeticOps

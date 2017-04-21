@@ -23,10 +23,21 @@ use nom::{hex_digit, digit};
 use std::str;
 use std_unicode;
 
-//named!(pub parse_string< ASTNode >, alt!(parse_string_bracket | parse_string_regular));
-//
-//named!(parse_string_bracket< ASTNode >, )
-//named!(parse_string_regular< ASTNode >, )
+//named!(pub parse_string< ASTNode >, map!(alt!(parse_string_bracket | parse_string_regular), |s| ASTNode::String(s)));
+
+//named!(parse_string_bracket< ASTNode >, );
+named!(parse_string_regular<String>,
+       dbg_dmp!(
+       delimited!(
+        alt!(tag!("\"") | tag!("'")),
+        fold_many0!(alt!(
+            parse_byte |
+            parse_unicode
+        ), String::new(), |mut acc: String, item| {
+            acc.push(item);
+            acc
+        }),
+        alt!(tag!("\"") | tag!("'")))));
 
 named!(parse_byte<char>, alt!(parse_byte_x | parse_byte_d));
 
@@ -60,26 +71,32 @@ named!(parse_unicode<char>,
 
 #[cfg(test)]
 mod tests {
-    ast_panic_test!(test_parse_unicode_1, parse_unicode, "\\u{}");
-    ast_test!(test_parse_unicode_2, parse_unicode, "\\u{A}", std_unicode::char::from_u32(0xA).unwrap());
-    ast_test!(test_parse_unicode_3, parse_unicode, "\\u{a2}", std_unicode::char::from_u32(0xa2).unwrap());
-    ast_test!(test_parse_unicode_4, parse_unicode, "\\u{AFf9}", std_unicode::char::from_u32(0xAFf9).unwrap());
-    ast_test!(test_parse_unicode_5, parse_unicode, "\\u{0000000000000FFFF}", std_unicode::char::from_u32(0xFFFF).unwrap());
-    ast_test!(test_parse_unicode_6, parse_unicode, "\\u{10FFFF}", std_unicode::char::from_u32(0x10FFFF).unwrap());
-    ast_panic_test!(test_parse_unicode_7, parse_unicode, "\\u{110000}");
+    ast_panic_test!(test_parse_unicode_1, parse_unicode, r#"\u{}"#);
+    ast_test!(test_parse_unicode_2, parse_unicode, r#"\u{A}"#, std_unicode::char::from_u32(0xA).unwrap());
+    ast_test!(test_parse_unicode_3, parse_unicode, r#"\u{a2}"#, std_unicode::char::from_u32(0xa2).unwrap());
+    ast_test!(test_parse_unicode_4, parse_unicode, r#"\u{AFf9}"#, std_unicode::char::from_u32(0xAFf9).unwrap());
+    ast_test!(test_parse_unicode_5, parse_unicode, r#"\u{0000000000000FFFF}"#, std_unicode::char::from_u32(0xFFFF).unwrap());
+    ast_test!(test_parse_unicode_6, parse_unicode, r#"\u{10FFFF}"#, std_unicode::char::from_u32(0x10FFFF).unwrap());
+    ast_panic_test!(test_parse_unicode_7, parse_unicode, r#"\u{110000}"#);
 
 
-    ast_test!(test_parse_byte_d_1, parse_byte_d, "\\0", '\0');
-    ast_test!(test_parse_byte_d_2, parse_byte_d, "\\00", '\0');
-    ast_test!(test_parse_byte_d_3, parse_byte_d, "\\000", '\0');
-    // TODO: This should parse to the rust string "\u{0}0" make this test reflect that
-    ast_test!(test_parse_byte_d_4, parse_byte_d, "\\0000", '\0');
-    ast_test!(test_parse_byte_d_5, parse_byte_d, "\\230", '\u{E6}');
-    ast_panic_test!(test_parse_byte_d_6, parse_byte_d, "\\256");
+    ast_test!(test_parse_byte_d_1, parse_byte_d, r#"\0"#, '\0');
+    ast_test!(test_parse_byte_d_2, parse_byte_d, r#"\00"#, '\0');
+    ast_test!(test_parse_byte_d_3, parse_byte_d, r#"\000"#, '\0');
+    // TODO: This should parse to the rust string r#"\u{0}0"# make this test reflect that
+    ast_test!(test_parse_byte_d_4, parse_byte_d, r#"\0000"#, '\0');
+    ast_test!(test_parse_byte_d_5, parse_byte_d, r#"\230"#, '\u{E6}');
+    ast_panic_test!(test_parse_byte_d_6, parse_byte_d, r#"\256"#);
 
-    ast_test!(test_parse_byte_x_1, parse_byte_x, "\\x00", '\0');
-    // TODO: This should parse to the rust string "\u{0}0" make this test reflect that
-    ast_test!(test_parse_byte_x_2, parse_byte_x, "\\x000", '\0');
-    ast_test!(test_parse_byte_x_3, parse_byte_x, "\\x23", '\u{23}');
-    ast_test!(test_parse_byte_x_4, parse_byte_x, "\\xFf", '\u{FF}');
+
+    ast_test!(test_parse_byte_x_1, parse_byte_x, r#"\x00"#, '\0');
+    // TODO: This should parse to the rust string r#"\u{0}0"# make this test reflect that
+    ast_test!(test_parse_byte_x_2, parse_byte_x, r#"\x000"#, '\0');
+    ast_test!(test_parse_byte_x_3, parse_byte_x, r#"\x23"#, '\u{23}');
+    ast_test!(test_parse_byte_x_4, parse_byte_x, r#"\xFf"#, '\u{FF}');
+
+    ast_test!(test_parse_string_regular_1, parse_string_regular, r#""""#, "");
+    ast_test!(test_parse_string_regular_2, parse_string_regular, r#"''"#, "");
+    ast_test!(test_parse_string_regular_3, parse_string_regular, r#"'\u{1F62A}'"#, "😪");
+    ast_test!(test_parse_string_regular_4, parse_string_regular, r#"'\097'"#, "a");
 }

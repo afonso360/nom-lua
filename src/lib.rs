@@ -19,7 +19,6 @@
  */
 
 #![feature(unicode)]
-#![feature(decode_utf8)]
 
 //#![deny(missing_docs)]
 //#![deny(warnings)]
@@ -27,8 +26,6 @@
 
 #[macro_use]
 extern crate nom;
-#[macro_use]
-extern crate hexf;
 
 extern crate std_unicode;
 
