@@ -6,12 +6,12 @@ Lua 5.3 parser written with nom
 - [ ] chunk (deps block)
 - [ ] block (deps stat, restat)
 - [ ] stat (deps everything)
-  - [ ] ";"
+  - [x] ";"
   - [ ] varlist = explist (deps explis)
   - [ ] functioncall (deps functioncall)
-  - [ ] label
-  - [ ] "break"
-  - [ ] goto
+  - [x] label
+  - [x] "break"
+  - [x] goto
   - [ ] do end (deps block)
   - [ ] while (deps exp, block)
   - [ ] repeat until (deps exp, block)

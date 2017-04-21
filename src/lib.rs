@@ -84,6 +84,8 @@ pub mod exp;
 pub mod string;
 pub mod name;
 pub mod var;
+pub mod field;
+pub mod statement;
 //pub mod function;
 
 pub use nom::IResult;

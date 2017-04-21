@@ -31,6 +31,11 @@ pub enum ASTNode {
     Name(String),
     Paren(Box<ASTNode>),
 
+    //Statements
+    EmptyStatement,
+    Break,
+    Goto(Box<ASTNode>),
+
     // ArithmeticOps
     Add(Box<ASTNode>, Box<ASTNode>),
     Sub(Box<ASTNode>, Box<ASTNode>),
@@ -93,6 +98,11 @@ impl Display for ASTNode {
             Name(ref val) => write!(format, "(name {})", val),
             Label(ref val) => write!(format, "::{}::", val),
             Paren(ref expr) => write!(format, "({})", expr),
+
+            // Statements
+            EmptyStatement => write!(format, "(statement)"),
+            Break => write!(format, "(break)"),
+            Goto(ref loc) => write!(format, "goto {}", loc),
 
             // ArithmeticOps
             Add(ref left, ref right) => write!(format, "({} + {})", left, right),
