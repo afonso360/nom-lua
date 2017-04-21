@@ -2,6 +2,69 @@
 
 Lua 5.3 parser written with nom
 
+# Syntax
+- [ ] chunk (deps block)
+- [ ] block (deps stat, restat)
+- [ ] stat (deps everything)
+  - [ ] ";"
+  - [ ] varlist = explist (deps explis)
+  - [ ] functioncall (deps functioncall)
+  - [ ] label
+  - [ ] "break"
+  - [ ] goto
+  - [ ] do end (deps block)
+  - [ ] while (deps exp, block)
+  - [ ] repeat until (deps exp, block)
+  - [ ] if (deps exp, block)
+  - [ ] for (deps exp, block)
+  - [ ] for in (deps exp, explist, block)
+  - [ ] function (deps funcname)
+  - [ ] local function
+  - [ ] local (deps namelist, explist)
+- [ ] retstat
+- [x] label
+- [ ] funcname
+- [ ] varlist (deps var)
+- [ ] var (deps prefixexp, exp)
+- [x] namelist
+- [ ] explist (deps exp)
+- [ ] exp
+  - [x] Numeral
+  - [x] Nil
+  - [x] Bool
+  - [ ] LiteralString - can be done
+  - [x] "..."
+  - [ ] functiondef - can be done
+  - [ ] prefixexp
+  - [ ] tableconstructor
+  - [ ] op (recurse bug)
+- [ ] prefixexp (needs to be finished)
+- [ ] functioncall (deps args, prefixexp)
+- [ ] args (deps explist, tableconstructor, LiteralString)
+- [x] functiondef
+- [x] funcbody (done, deps parlist, block)
+- [ ] parlist
+- [ ] tableconstructor (deps fieldlist)
+- [ ] fieldlist (deps field)
+- [ ] field (deps, exp)
+- [x] fieldsep
+- [x] Binop (percedence error)
+- [x] Unop
+- [x] Name
+- [x] Numeral
+  - [X] Digit (does not overflow correctly)
+  - [X] Hex Digit
+  - [X] Float
+  - [ ] Hex Float
+- [x] LitrealString
+  - [ ] Short Literal
+    - [x] linebreaks
+    - [ ] byte
+    - [x] unicode
+    - [x] escape
+    - [ ] '\z'
+  - [ ] Literal
+
 
 # TODO
 - [ ] Different integer and floating point values (i32, f32)
