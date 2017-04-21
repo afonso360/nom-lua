@@ -18,7 +18,32 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
 use ast::ASTNode;
+use nom::hex_digit;
+use std::str;
+use std_unicode;
 
+//named!(pub parse_string< ASTNode >, alt!(parse_string_bracket | parse_string_regular));
+//
+//named!(parse_string_bracket< ASTNode >, )
+//named!(parse_string_regular< ASTNode >, )
 
+named!(parse_unicode<char>,
+       map_opt!(
+           map_res!(
+               map_res!(
+                   delimited!(tag!("\\u{"), recognize!(hex_digit), tag!("}")),
+                   str::from_utf8),
+                   |h| u32::from_str_radix(h, 16)),
+                   std_unicode::char::from_u32));
+
+#[cfg(test)]
+mod tests {
+    ast_panic_test!(test_parse_unicode_1, parse_unicode, "\\u{}");
+    ast_test!(test_parse_unicode_2, parse_unicode, "\\u{A}", std_unicode::char::from_u32(0xA).unwrap());
+    ast_test!(test_parse_unicode_3, parse_unicode, "\\u{a2}", std_unicode::char::from_u32(0xa2).unwrap());
+    ast_test!(test_parse_unicode_4, parse_unicode, "\\u{AFf9}", std_unicode::char::from_u32(0xAFf9).unwrap());
+    ast_test!(test_parse_unicode_5, parse_unicode, "\\u{0000000000000FFFF}", std_unicode::char::from_u32(0xFFFF).unwrap());
+    ast_test!(test_parse_unicode_6, parse_unicode, "\\u{10FFFF}", std_unicode::char::from_u32(0x10FFFF).unwrap());
+    ast_panic_test!(test_parse_unicode_7, parse_unicode, "\\u{110000}");
+}

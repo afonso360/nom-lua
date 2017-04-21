@@ -18,6 +18,9 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#![feature(unicode)]
+#![feature(decode_utf8)]
+
 //#![deny(missing_docs)]
 //#![deny(warnings)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
@@ -27,17 +30,18 @@ extern crate nom;
 #[macro_use]
 extern crate hexf;
 
+extern crate std_unicode;
+
 // this is going to be usefull when looking at this crate
 // https://www.lua.org/manual/5.3/manual.html#9
 
-
 macro_rules! ast_panic_test {
-    ($name: ident, $func: ident, $input: expr, $output: expr) => {
+    ($name: ident, $func: ident, $input: expr) => {
         #[test]
         #[should_panic]
         fn $name () {
             use super::*;
-            assert_eq!($func($input.as_bytes()).unwrap().1, $output);
+            $func($input.as_bytes()).unwrap().1;
         }
     }
 }

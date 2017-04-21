@@ -108,10 +108,11 @@ mod tests {
 
     ast_test!(test_parse_int_1, parse_int, "20", ASTNode::Integer(20));
     // Overflowing causes integers to be interperted as floats, thus this should fail
-    ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520", ASTNode::Integer(1));
+    //ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520");
+
     // preceding +/- are separate ASTNodes
-    ast_panic_test!(test_parse_int_4, parse_int, "-20", ASTNode::Integer(-20));
-    ast_panic_test!(test_parse_int_5, parse_int, "+20", ASTNode::Integer(20));
+    ast_panic_test!(test_parse_int_4, parse_int, "-20");
+    ast_panic_test!(test_parse_int_5, parse_int, "+20");
 
 
     ast_test!(test_parse_hex_1, parse_hex_int, "0X20", ASTNode::Integer(0x20));
@@ -120,10 +121,10 @@ mod tests {
     ast_test!(test_parse_hex_4, parse_hex_int, "0x20aB", ASTNode::Integer(0x20AB));
     ast_test!(test_parse_hex_5, parse_hex_int, "0X20F", ASTNode::Integer(0x20F));
     // need 0x preceding to parse sucessfully
-    ast_panic_test!(test_parse_hex_6, parse_hex_int, "20", ASTNode::Integer(32));
+    ast_panic_test!(test_parse_hex_6, parse_hex_int, "20");
     // preceding +/- are separate ASTNodes
-    ast_panic_test!(test_parse_hex_7, parse_hex_int, "-0x20", ASTNode::Integer(-32));
-    ast_panic_test!(test_parse_hex_8, parse_hex_int, "+0x20", ASTNode::Integer(32));
+    ast_panic_test!(test_parse_hex_7, parse_hex_int, "-0x20");
+    ast_panic_test!(test_parse_hex_8, parse_hex_int, "+0x20");
 
 
     ast_test!(test_parse_float_1, parse_float, "3.0", ASTNode::Float(3.0));
@@ -137,11 +138,11 @@ mod tests {
     ast_test!(test_parse_float_9, parse_float, "34e-1", ASTNode::Float(3.4));
     ast_test!(test_parse_float_10, parse_float, "34.e-1", ASTNode::Float(3.4));
     ast_test!(test_parse_float_11, parse_float, ".2e1", ASTNode::Float(2.0));
-    ast_panic_test!(test_parse_float_12, parse_float, ".e1", ASTNode::Float(0.0));
+    ast_panic_test!(test_parse_float_12, parse_float, ".e1");
 
     // preceding +/- are separate ASTNodes
-    ast_panic_test!(test_parse_float_13, parse_float, "-20.0", ASTNode::Float(-20.0));
-    ast_panic_test!(test_parse_float_14, parse_float, "+20.0", ASTNode::Float(20.0));
+    ast_panic_test!(test_parse_float_13, parse_float, "-20.0");
+    ast_panic_test!(test_parse_float_14, parse_float, "+20.0");
 
 
 
