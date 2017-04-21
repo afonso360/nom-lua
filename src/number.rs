@@ -175,6 +175,6 @@ mod tests {
 
     //TODO: Enable these tests
     //ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
-    //ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
+    ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
     //ast_test!(test_parse_number_3, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
 }

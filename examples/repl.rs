@@ -20,15 +20,13 @@
 
 extern crate nom_lua;
 
-use nom_lua::op;
-
 fn exec_repl() {
     use std::io::{BufRead, Write};
     let stdin = std::io::stdin();
     let stdout = std::io::stdout();
     for line in stdin.lock().lines() {
         if let nom_lua::IResult::Done(_, string) =
-            op::parse_op(line.expect("Failed to read line").as_bytes()) {
+            nom_lua::exp::parse_exp(line.expect("Failed to read line").as_bytes()) {
             println!("EVAL: {}", string);
         } else {
             println!("ERROR: Parse Error");

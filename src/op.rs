@@ -31,26 +31,7 @@ use std::str::FromStr;
 
 use ast::ASTNode;
 use super::exp::parse_exp;
-
-//use self::relational_ops::parse_relational_ops;
-//use self::arithmetic_ops::{parse_addsub, parse_exponent};
-//use self::binary_ops::{parse_binary_or};
-//use self::logic_ops::{parse_logic_or};
-//use self::concat_ops::{parse_concat};
-
-/// Here is the call chain for the exp parser
-/// fold_arithmetic_ops ( ^ )
-/// fold_unary_ops ( all of them )
-/// fold_arithmetic_ops ( * // % / )
-/// fold_arithmetic_ops ( + - )
-/// fold_concat_ops ( + - )
-/// fold_binary_ops ( << >> )
-/// fold_binary_ops ( & )
-/// fold_binary_ops ( ~ )
-/// fold_binary_ops ( | )
-/// parse_relational_ops ( < <= > >= == ~= )
-/// logic_ops ( and )
-/// logic_ops ( or )
+use super::number::parse_number;
 
 //This is marked just for convenience so users know where to enter
 named!(pub parse_op<ASTNode>, dbg!(alt!(parse_unop | parse_binop)));
@@ -82,9 +63,9 @@ fn fold_binop(bop: BinOp, left: ASTNode, right: ASTNode) -> ASTNode {
 }
 
 named!(pub parse_binop<ASTNode>, do_parse!(
-        left: factor >>
+        left: parse_exp >>
         bop: binop >>
-        right: factor >> (fold_binop(bop, left, right))));
+        right: parse_exp >> (fold_binop(bop, left, right))));
 
 named!(binop<BinOp>, alt!(
     ws!(tag!("^"))   => { |_| BinOp::Exp } |
@@ -138,7 +119,7 @@ pub enum BinOp {
 
 named!(parse_unop<ASTNode>, do_parse!(
         unop: unop >>
-        right: factor >> (fold_unop(unop, right))));
+        right: parse_exp >> (fold_unop(unop, right))));
 
 
 fn fold_unop(unop: UnOp, right: ASTNode) -> ASTNode {
@@ -165,24 +146,3 @@ pub enum UnOp {
     UMin,
     BinNot
 }
-
-
-named!(pub parens< ASTNode >,
-       delimited!(
-            ws!(tag!("(")),
-            map!(map!(parse_op, Box::new), ASTNode::Paren),
-            ws!(tag!(")"))
-       ));
-
-named!(pub factor< ASTNode >,
-       alt_complete!(
-           map!(
-               map_res!(
-                   map_res!(
-                       ws!(digit),
-                   str::from_utf8),
-               FromStr::from_str),
-           ASTNode::Integer)
-       |
-           parens
-       ));
