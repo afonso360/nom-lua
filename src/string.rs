@@ -23,16 +23,27 @@ use nom::{hex_digit, digit};
 use std::str;
 use std_unicode;
 
-//named!(pub parse_string< ASTNode >, map!(alt!(parse_string_bracket | parse_string_regular), |s| ASTNode::String(s)));
+//named!(pub parse_string< ASTNode >, map!(alt!(parse_string_literal | parse_string_short_literal), |s| ASTNode::String(s)));
 
-//named!(parse_string_bracket< ASTNode >, );
-named!(parse_string_regular<String>,
+//named!(parse_string_literal< ASTNode >, );
+
+// TODO: A short literal string cannot contain unescaped line breaks nor escapes not forming a valid escape sequence.
+// TODO: " ' inside strings are valid
+// TODO: The escape sequence '\z' skips the following span of white-space characters, including line breaks;
+// TODO: Test the newline escaping with the following newlines
+// carriage return
+// newline
+// carriage return followed by newline
+// newline followed by carriage return
+named!(parse_string_short_literal<String>,
        dbg_dmp!(
        delimited!(
         alt!(tag!("\"") | tag!("'")),
         fold_many0!(alt!(
+            map!(alt!(tag!("\\\r\n") | tag!("\\\n\r") | tag!("\\\n")), |_| '\n') |
             parse_byte |
-            parse_unicode
+            parse_unicode |
+            one_of!("\x07\x08\x09\x0A\x0B\x0C\x0D")
         ), String::new(), |mut acc: String, item| {
             acc.push(item);
             acc
@@ -95,8 +106,12 @@ mod tests {
     ast_test!(test_parse_byte_x_3, parse_byte_x, r#"\x23"#, '\u{23}');
     ast_test!(test_parse_byte_x_4, parse_byte_x, r#"\xFf"#, '\u{FF}');
 
-    ast_test!(test_parse_string_regular_1, parse_string_regular, r#""""#, "");
-    ast_test!(test_parse_string_regular_2, parse_string_regular, r#"''"#, "");
-    ast_test!(test_parse_string_regular_3, parse_string_regular, r#"'\u{1F62A}'"#, "😪");
-    ast_test!(test_parse_string_regular_4, parse_string_regular, r#"'\097'"#, "a");
+    ast_test!(test_parse_string_short_literal_1, parse_string_short_literal, r#""""#, "");
+    ast_test!(test_parse_string_short_literal_2, parse_string_short_literal, r#"''"#, "");
+    ast_test!(test_parse_string_short_literal_3, parse_string_short_literal, r#"'\u{1F62A}'"#, "😪");
+    ast_test!(test_parse_string_short_literal_4, parse_string_short_literal, r#"'\097'"#, "a");
+    ast_test!(test_parse_string_short_literal_5, parse_string_short_literal, format!("'{}'", "\x07\x08\x09\x0A\x0B\x0C\x0D"), "\x07\x08\x09\x0A\x0B\x0C\x0D");
+    ast_test!(test_parse_string_short_literal_6, parse_string_short_literal, "'\\\n\r'", "\n");
+    ast_test!(test_parse_string_short_literal_7, parse_string_short_literal, "'\\\r\n'", "\n");
+    ast_test!(test_parse_string_short_literal_8, parse_string_short_literal, "'\\\n'", "\n");
 }
