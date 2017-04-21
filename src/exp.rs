@@ -35,7 +35,15 @@ named!(parse_prefixexp< ASTNode >, alt!(
         delimited!(tag!("("), ws!(parse_exp), tag!(")"))
 ));
 
-named!(pub parse_exp< ASTNode >, dbg!(complete!(alt!(
+named!(pub parse_explist<ASTNode>, map!(map!(
+            map!(do_parse!(
+                   a: parse_exp
+                >> b: many0!(preceded!(ws!(tag!(",")), parse_exp))
+                >> ((a,b))
+            ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
+Box::new), ASTNode::ExpList));
+
+named!(pub parse_exp<ASTNode>, dbg!(complete!(alt!(
                 parse_op |
                 parse_number |
                 parse_nil |
@@ -71,6 +79,19 @@ mod tests {
     ast_test!(test_parse_vararg, parse_vararg, "...", ASTNode::VarArg);
     ast_valid!(test_parse_fieldsep_1, parse_fieldsep, ";");
     ast_valid!(test_parse_fieldsep_2, parse_fieldsep, ",");
+    //TODO: Uncomment these tests once exp is working
+    //ast_test!(test_parse_explist_1, parse_explist, "true", ASTNode::ExpList(Box::new(vec![
+    //    ASTNode::Bool(true),
+    //])));
+    //ast_test!(test_parse_explist_2, parse_explist, "true , true", ASTNode::ExpList(Box::new(vec![
+    //    ASTNode::Bool(true),
+    //    ASTNode::Bool(true),
+    //])));
+    //ast_test!(test_parse_explist_3, parse_explist, "true , false, false", ASTNode::ExpList(Box::new(vec![
+    //    ASTNode::Bool(true),
+    //    ASTNode::Bool(false),
+    //    ASTNode::Bool(false),
+    //])));
 
     //make a generalized example of this test, ie: any random char after a tag
     //ast_panic_test!(test_parse_vararg_false, parse_vararg, "....", ASTNode::VarArg);
