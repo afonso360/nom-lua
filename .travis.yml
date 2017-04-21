@@ -15,8 +15,6 @@ addons:
       - cmake
 
 rust:
-  - stable
-  - beta
   - nightly
 
 os:
