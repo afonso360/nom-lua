@@ -99,7 +99,7 @@ named!(parse_hex_float< ASTNode >,
 
 
 
-named!(parse_number< ASTNode >,
+named!(pub parse_number< ASTNode >,
        alt!(parse_hex_float | parse_float | parse_hex_int | parse_int));
 
 #[cfg(test)]

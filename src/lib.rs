@@ -27,6 +27,10 @@ extern crate nom;
 #[macro_use]
 extern crate hexf;
 
+// this is going to be usefull when looking at this crate
+// https://www.lua.org/manual/5.3/manual.html#9
+
+
 macro_rules! ast_panic_test {
     ($name: ident, $func: ident, $input: expr, $output: expr) => {
         #[test]
@@ -75,8 +79,11 @@ macro_rules! ast_invalid {
 pub mod ast;
 pub mod op;
 pub mod number;
+pub mod exp;
+pub mod string;
+//pub mod function;
 
-
+#[cfg(test)]
 pub fn exec_repl() {
     use std::io::{BufRead, Write};
     let stdin = std::io::stdin();

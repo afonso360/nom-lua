@@ -25,6 +25,7 @@ use std::fmt::{Display, Formatter};
 pub enum ASTNode {
     Integer(i64),
     Float(f64),
+    Bool(bool),
     Paren(Box<ASTNode>),
 
     // ArithmeticOps
@@ -63,6 +64,14 @@ pub enum ASTNode {
 
     // ConcatenationOps
     Concat(Box<ASTNode>, Box<ASTNode>),
+
+    // Expression
+    Nil,
+    VarArg,
+    TableConstructor(Box<ASTNode>),
+
+    // Function
+    Function(Box<ASTNode>, Box<ASTNode>),
 }
 
 impl Display for ASTNode {
@@ -71,7 +80,9 @@ impl Display for ASTNode {
         match *self {
             Integer(val) => write!(format, "{}", val),
             Float(val) => write!(format, "{}f", val),
+            Bool(val) => write!(format, "{}", val),
             Paren(ref expr) => write!(format, "({})", expr),
+
             // ArithmeticOps
             Add(ref left, ref right) => write!(format, "({} + {})", left, right),
             Sub(ref left, ref right) => write!(format, "({} - {})", left, right),
@@ -101,13 +112,21 @@ impl Display for ASTNode {
             Lsh(ref left, ref right) => write!(format, "({} << {})", left, right),
 
             // UnaryOps
-            BinNot(ref right) => write!(format, "(~{})", right),
-            Len(ref right) => write!(format, "(#{})", right),
-            UMin(ref right) => write!(format, "(-{})", right),
-            Not(ref right) => write!(format, "(not {})", right),
+            BinNot(ref right) => write!(format, "~{}", right),
+            Len(ref right) => write!(format, "#{}", right),
+            UMin(ref right) => write!(format, "-{}", right),
+            Not(ref right) => write!(format, "not {}", right),
 
             // ConcatenationOps
-            Concat(ref left, ref right) => write!(format, "({} .. {})", left, right),
+            Concat(ref left, ref right) => write!(format, "{} .. {}", left, right),
+
+            // Exp
+            Nil => write!(format, "nil"),
+            VarArg => write!(format, "..."),
+            TableConstructor(ref fieldlist) => write!(format, "{{ {} }}", fieldlist),
+
+            //Function
+            Function(ref parlist, ref fbody) => write!(format, "function ({}) {}", parlist, fbody),
         }
     }
 }
