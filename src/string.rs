@@ -19,32 +19,60 @@
  */
 
 use ast::ASTNode;
-use nom::{hex_digit, digit, sp};
+use nom::{hex_digit, digit, sp, IResult};
 use std::str;
 use std_unicode;
 
-//named!(pub parse_string< ASTNode >, map!(alt!(parse_string_literal | parse_string_short_literal), |s| ASTNode::String(s)));
+//named!(pub parse_string< ASTNode >,
+//       map!(alt!(parse_string_literal | parse_string_short_literal), |s| ASTNode::String(s)));
 
-//named!(parse_string_literal< ASTNode >, );
+
+//named!(parse_string_literal<String>, map_res!(raw_string, |s, _| s));
+
+//pub fn raw_string(input: &str) -> IResult<&str, (String, usize)> {
+//    let mut chars = input.char_indices();
+//    let mut n = 0;
+//    while let Some((byte_offset, ch)) = chars.next() {
+//        match ch {
+//            '"' => {
+//                n = byte_offset;
+//                break;
+//            }
+//            '#' => {}
+//            _ => return IResult::Error,
+//        }
+//    }
+//    let mut s = String::new();
+//    for (byte_offset, ch) in chars {
+//        match ch {
+//            '"' if input[byte_offset + 1..].starts_with(&input[..n]) => {
+//                let rest = &input[byte_offset + 1 + n..];
+//                return IResult::Done(rest, (s, n));
+//            }
+//            '\r' => {}
+//            _ => s.push(ch),
+//        }
+//    }
+//    IResult::Error
+//}
 
 // TODO: A short literal string cannot contain unescaped line breaks nor escapes not forming a valid escape sequence.
 // TODO: " ' inside strings are valid
 named!(parse_string_short_literal<String>,
-       dbg_dmp!(
        delimited!(
         alt!(tag!("\"") | tag!("'")),
         fold_many0!(alt!(
-            map!(parse_linebreak, |_| '\n') |
+            map!(linebreak, |_| '\n') |
             parse_byte |
             parse_unicode |
             one_of!("\x07\x08\x09\x0A\x0B\x0C\x0D")
             // Find a way to discard the output from this: preceded!(tag!(r#"\z"#), alt!(sp |
-            // parse_linebreak))
+            // linebreak))
         ), String::new(), |mut acc: String, item| {
             acc.push(item);
             acc
         }),
-        alt!(tag!("\"") | tag!("'")))));
+        alt!(tag!("\"") | tag!("'"))));
 
 named!(parse_byte<char>, alt!(parse_byte_x | parse_byte_d));
 
@@ -53,7 +81,7 @@ named!(parse_byte_x<char>, map!(map_res!(map_res!(
                 str::from_utf8),
             |s| u8::from_str_radix(s, 16)), |i: u8| i as char));
 
-named!(parse_linebreak, alt!(tag!("\\\r\n") | tag!("\\\n\r") | tag!("\\\n")));
+named!(linebreak, alt!(tag!("\\\r\n") | tag!("\\\n\r") | tag!("\\\n")));
 
 
 // TODO: if a decimal escape sequence is to be followed by a digit, it must be expressed using exactly three digits
@@ -98,10 +126,11 @@ mod tests {
 
 
     ast_test!(test_parse_byte_x_1, parse_byte_x, r#"\x00"#, '\0');
-    // TODO: This should parse to the rust string r#"\u{0}0"# make this test reflect that
-    ast_test!(test_parse_byte_x_2, parse_byte_x, r#"\x000"#, '\0');
+    // TODO: This should parse to the rust string "\u{0a}0" make this test reflect that
+    //ast_test!(test_parse_byte_x_2, parse_byte_x, r#"\x0a0"#, '\x0a');
     ast_test!(test_parse_byte_x_3, parse_byte_x, r#"\x23"#, '\u{23}');
-    ast_test!(test_parse_byte_x_4, parse_byte_x, r#"\xFf"#, '\u{FF}');
+    ast_test!(test_parse_byte_x_4, parse_byte_x, r#"\x000023"#, '\u{23}');
+    ast_test!(test_parse_byte_x_5, parse_byte_x, r#"\xFf"#, '\u{FF}');
 
     ast_test!(test_parse_string_short_literal_1, parse_string_short_literal, r#""""#, "");
     ast_test!(test_parse_string_short_literal_2, parse_string_short_literal, r#"''"#, "");
