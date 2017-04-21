@@ -25,7 +25,7 @@
 //mod logic_ops;
 //mod concat_ops;
 
-use nom::{digit};
+use nom::digit;
 use std::str;
 use std::str::FromStr;
 
@@ -144,5 +144,5 @@ pub enum UnOp {
     Not,
     Len,
     UMin,
-    BinNot
+    BinNot,
 }

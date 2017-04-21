@@ -48,14 +48,14 @@ named!(recognize_keyword, alt!(
      tag!("while")
 ));
 
-named!(parse_name<String>, map_res!(map_res!(do_parse!(
+named!(pub parse_name<String>, map_res!(map_res!(do_parse!(
             not!(recognize_keyword) >>
             a: recognize!(preceded!(
                   many1!(alt!(tag!("_") | alpha)),
                   many0!(alt!(tag!("_") | alpha | digit)))) >> (a)),
             str::from_utf8), FromStr::from_str));
 
-named!(parse_label<ASTNode>, map!(delimited!(tag!("::"), ws!(parse_name), tag!("::")), ASTNode::Label));
+named!(pub parse_label<ASTNode>, map!(delimited!(tag!("::"), ws!(parse_name), tag!("::")), ASTNode::Label));
 
 
 #[cfg(test)]
