@@ -23,8 +23,8 @@ use nom::{hex_digit, digit, sp, IResult};
 use std::str;
 use std_unicode;
 
-//named!(pub parse_string< ASTNode >,
-//       map!(alt!(parse_string_literal | parse_string_short_literal), |s| ASTNode::String(s)));
+named!(pub parse_string< ASTNode >,
+       map!(alt!(/*parse_string_literal |*/ parse_string_short_literal), |s| ASTNode::String(s)));
 
 
 //named!(parse_string_literal<String>, map_res!(raw_string, |s, _| s));

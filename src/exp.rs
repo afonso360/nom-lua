@@ -23,6 +23,8 @@ use ast::ASTNode;
 
 use number::parse_number;
 use op::parse_op;
+use string::parse_string;
+//use function::parse_functiondef;
 
 named!(parse_vararg< ASTNode >, map!(tag!("..."), |_| ASTNode::VarArg));
 named!(parse_nil< ASTNode >, map!(tag!("nil"), |_| ASTNode::Nil));
@@ -48,9 +50,9 @@ named!(pub parse_exp<ASTNode>, dbg!(complete!(alt!(
                 parse_number |
                 parse_nil |
                 parse_bool |
-                // parse_literal_string
+                parse_string |
                 parse_vararg |
-                // parse_functiondef |
+                //parse_functiondef |
                 parse_prefixexp
 //                parse_tableconstructior
             ))));
@@ -64,12 +66,6 @@ named!(pub parse_exp<ASTNode>, dbg!(complete!(alt!(
 //           (ASTNode::TableConstructor(f))));
 
 
-//named!(parse_fieldlist< ASTNode >, unimplemented!());
-//named!(parse_field, alt!(
-//        delimited!(tag!("["), ws!(parse_exp), tag!("]")) |
-//        tag!(";")
-//));
-named!(parse_fieldsep, alt!(tag!(",") | tag!(";")));
 
 #[cfg(test)]
 mod tests {
@@ -77,8 +73,7 @@ mod tests {
     ast_test!(test_parse_bool_t, parse_bool, "true", ASTNode::Bool(true));
     ast_test!(test_parse_bool_f, parse_bool, "false", ASTNode::Bool(false));
     ast_test!(test_parse_vararg, parse_vararg, "...", ASTNode::VarArg);
-    ast_valid!(test_parse_fieldsep_1, parse_fieldsep, ";");
-    ast_valid!(test_parse_fieldsep_2, parse_fieldsep, ",");
+
     //TODO: Uncomment these tests once exp is working
     //ast_test!(test_parse_explist_1, parse_explist, "true", ASTNode::ExpList(Box::new(vec![
     //    ASTNode::Bool(true),

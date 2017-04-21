@@ -32,7 +32,7 @@ Lua 5.3 parser written with nom
   - [x] Numeral
   - [x] Nil
   - [x] Bool
-  - [ ] LiteralString - can be done
+  - [x] LiteralString
   - [x] "..."
   - [ ] functiondef - can be done
   - [ ] prefixexp
@@ -41,8 +41,8 @@ Lua 5.3 parser written with nom
 - [ ] prefixexp (needs to be finished)
 - [ ] functioncall (deps args, prefixexp)
 - [ ] args (deps explist, tableconstructor, LiteralString)
-- [x] functiondef
-- [x] funcbody (done, deps parlist, block)
+- [ ] functiondef (deps funcbody)
+- [ ] funcbody (deps parlist, block)
 - [ ] parlist
 - [ ] tableconstructor (deps fieldlist)
 - [ ] fieldlist (deps field)
