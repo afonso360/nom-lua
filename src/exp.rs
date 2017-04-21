@@ -52,12 +52,13 @@ named!(pub parse_exp< ASTNode >, alt!(
 
 //named!(parse_fieldlist< ASTNode >, unimplemented!());
 
-ast_test!(test_parse_nil, parse_nil, "nil", ASTNode::Nil);
-ast_test!(test_parse_bool_t, parse_bool, "true", ASTNode::Bool(true));
-ast_test!(test_parse_bool_f, parse_bool, "false", ASTNode::Bool(false));
-ast_test!(test_parse_vararg, parse_vararg, "...", ASTNode::VarArg);
+#[cfg(test)]
+mod tests {
+    ast_test!(test_parse_nil, parse_nil, "nil", ASTNode::Nil);
+    ast_test!(test_parse_bool_t, parse_bool, "true", ASTNode::Bool(true));
+    ast_test!(test_parse_bool_f, parse_bool, "false", ASTNode::Bool(false));
+    ast_test!(test_parse_vararg, parse_vararg, "...", ASTNode::VarArg);
 
-//make a generalized example of this test, ie: any random char after a tag
-//ast_panic_test!(test_parse_vararg_false, parse_vararg, "....", ASTNode::VarArg);
-
-
+    //make a generalized example of this test, ie: any random char after a tag
+    //ast_panic_test!(test_parse_vararg_false, parse_vararg, "....", ASTNode::VarArg);
+}

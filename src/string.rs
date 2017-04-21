@@ -19,7 +19,7 @@
  */
 
 use ast::ASTNode;
-use nom::hex_digit;
+use nom::{hex_digit, digit};
 use std::str;
 use std_unicode;
 
@@ -27,6 +27,25 @@ use std_unicode;
 //
 //named!(parse_string_bracket< ASTNode >, )
 //named!(parse_string_regular< ASTNode >, )
+
+//named!(parse_byte<char>, alt!(parse_byte_x | parse_byte_d));
+
+//named!(parse_byte_x<char>, preceded!(tag!("\\x"), tag!("x")));
+
+
+
+// TODO: if a decimal escape sequence is to be followed by a digit, it must be expressed using exactly three digits
+named!(parse_byte_d<char>, dbg_dmp!(map!(map_res!(
+            preceded!(tag!("\\"), fold_many_m_n!(1, 3, digit, String::new(), |mut acc: String, item: &[u8]| {
+                for c in item {
+                    acc.push(*c as char);
+                }
+                acc
+            })),
+            |s: String| {
+                println!("here: {}", s);
+                s.parse::<u8>()
+            }), |i: u8| i as char)));
 
 named!(parse_unicode<char>,
        map_opt!(
@@ -46,4 +65,14 @@ mod tests {
     ast_test!(test_parse_unicode_5, parse_unicode, "\\u{0000000000000FFFF}", std_unicode::char::from_u32(0xFFFF).unwrap());
     ast_test!(test_parse_unicode_6, parse_unicode, "\\u{10FFFF}", std_unicode::char::from_u32(0x10FFFF).unwrap());
     ast_panic_test!(test_parse_unicode_7, parse_unicode, "\\u{110000}");
+
+
+    ast_test!(test_parse_byte_d_1, parse_byte_d, "\\0", '\0');
+    ast_test!(test_parse_byte_d_2, parse_byte_d, "\\00", '\0');
+    ast_test!(test_parse_byte_d_3, parse_byte_d, "\\000", '\0');
+    // TODO: This should parse to the rust string "\u{0}0" make this test reflect that
+    ast_test!(test_parse_byte_d_4, parse_byte_d, "\\0000", '\0');
+    ast_test!(test_parse_byte_d_5, parse_byte_d, "\\230", '\u{E6}');
+    ast_panic_test!(test_parse_byte_d_6, parse_byte_d, "\\256");
+
 }
