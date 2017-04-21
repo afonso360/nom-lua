@@ -19,7 +19,7 @@
  */
 
 use ast::ASTNode;
-use nom::{hex_digit, digit};
+use nom::{hex_digit, digit, sp};
 use std::str;
 use std_unicode;
 
@@ -29,21 +29,17 @@ use std_unicode;
 
 // TODO: A short literal string cannot contain unescaped line breaks nor escapes not forming a valid escape sequence.
 // TODO: " ' inside strings are valid
-// TODO: The escape sequence '\z' skips the following span of white-space characters, including line breaks;
-// TODO: Test the newline escaping with the following newlines
-// carriage return
-// newline
-// carriage return followed by newline
-// newline followed by carriage return
 named!(parse_string_short_literal<String>,
        dbg_dmp!(
        delimited!(
         alt!(tag!("\"") | tag!("'")),
         fold_many0!(alt!(
-            map!(alt!(tag!("\\\r\n") | tag!("\\\n\r") | tag!("\\\n")), |_| '\n') |
+            map!(parse_linebreak, |_| '\n') |
             parse_byte |
             parse_unicode |
             one_of!("\x07\x08\x09\x0A\x0B\x0C\x0D")
+            // Find a way to discard the output from this: preceded!(tag!(r#"\z"#), alt!(sp |
+            // parse_linebreak))
         ), String::new(), |mut acc: String, item| {
             acc.push(item);
             acc
@@ -57,6 +53,7 @@ named!(parse_byte_x<char>, map!(map_res!(map_res!(
                 str::from_utf8),
             |s| u8::from_str_radix(s, 16)), |i: u8| i as char));
 
+named!(parse_linebreak, alt!(tag!("\\\r\n") | tag!("\\\n\r") | tag!("\\\n")));
 
 
 // TODO: if a decimal escape sequence is to be followed by a digit, it must be expressed using exactly three digits
