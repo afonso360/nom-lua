@@ -35,17 +35,17 @@ named!(parse_prefixexp< ASTNode >, alt!(
         delimited!(tag!("("), ws!(parse_exp), tag!(")"))
 ));
 
-named!(pub parse_exp< ASTNode >, dbg!(alt!(
+named!(pub parse_exp< ASTNode >, dbg!(complete!(alt!(
+                parse_op |
                 parse_number |
                 parse_nil |
                 parse_bool |
-                parse_op |
                 // parse_literal_string
                 parse_vararg |
                 // parse_functiondef |
                 parse_prefixexp
 //                parse_tableconstructior
-            )));
+            ))));
 
 // TODO: Missing tests
 //named!(parse_tableconstructor< ASTNode >,
