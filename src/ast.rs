@@ -76,7 +76,7 @@ pub enum ASTNode {
     // Expression
     Nil,
     VarArg,
-    TableConstructor(Box<ASTNode>),
+    TableConstructor(Box<Option<ASTNode>>),
 
     // Function
     Function(Box<ASTNode>),
@@ -87,6 +87,11 @@ pub enum ASTNode {
     ExpList(Box<Vec<ASTNode>>),
     VarList(Box<Vec<ASTNode>>),
     NameList(Box<Vec<ASTNode>>),
+    FieldList(Box<Vec<ASTNode>>),
+
+    // Field
+    FieldSingle(Box<ASTNode>),
+    FieldAssign(Box<ASTNode>, Box<ASTNode>),
 
     // Local
     Local(Box<ASTNode>),
@@ -149,7 +154,8 @@ impl Display for ASTNode {
             // Exp
             Nil => write!(format, "nil"),
             VarArg => write!(format, "..."),
-            TableConstructor(ref fieldlist) => write!(format, "{{ {} }}", fieldlist),
+            //TODO: Remove this debug impl
+            TableConstructor(ref fieldlist) => write!(format, "{{ {:?} }}", fieldlist),
 
             //Function
             Function(ref f) => write!(format, "{}", f),
@@ -160,6 +166,11 @@ impl Display for ASTNode {
             ExpList(ref explist) => write!(format, "(explist)"),
             VarList(ref varlist) => write!(format, "(varlist)"),
             NameList(ref namelist) => write!(format, "(namelist)"),
+            FieldList(ref namelist) => write!(format, "(fieldlist)"),
+
+            // Field
+            FieldSingle(ref e) => write!(format, "(field {})", e),
+            FieldAssign(ref n, ref e) => write!(format, "(field {} => {})", n, e),
 
             //Local
             Local(ref inner) => write!(format, "local {}", inner),

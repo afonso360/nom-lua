@@ -25,6 +25,7 @@ use number::parse_number;
 use op::parse_op;
 use string::parse_string;
 //use function::parse_functiondef;
+use field::parse_fieldlist;
 
 named!(parse_vararg< ASTNode >, map!(tag!("..."), |_| ASTNode::VarArg));
 named!(parse_nil< ASTNode >, map!(tag!("nil"), |_| ASTNode::Nil));
@@ -47,23 +48,23 @@ Box::new), ASTNode::ExpList));
 
 named!(pub parse_exp<ASTNode>, alt!(
                 parse_op |
-                //parse_number | // parse_number is embedded in parse_op
                 parse_nil |
                 parse_bool |
                 parse_string |
                 parse_vararg |
                 //parse_functiondef |
-                parse_prefixexp
-//                parse_tableconstructior
-            ));
+                parse_prefixexp |
+                parse_tableconstructor
+));
 
 // TODO: Missing tests
-//named!(parse_tableconstructor< ASTNode >,
-//       do_parse!(
-//           tag!("{") >>
-//           f: parse_fieldlist >>
-//           tag!("}") >>
-//           (ASTNode::TableConstructor(f))));
+named!(parse_tableconstructor<ASTNode>,
+       map!(
+       do_parse!(
+              tag!("{")
+           >> f: ws!(opt!(parse_fieldlist))
+           >> tag!("}")
+           >> (Box::new(f))), ASTNode::TableConstructor));
 
 
 

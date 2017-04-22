@@ -23,8 +23,9 @@ use std::str::FromStr;
 use ast::ASTNode;
 use hexf_parse::parse_hexf64;
 
-use super::nom::{digit, hex_digit, double};
+use super::nom::{digit, hex_digit};
 //TODO: LOCALE dependent decimal point!
+//TODO: Hex numbers
 
 named!(parse_int_overflow<ASTNode>, map!(
            map_res!(map_res!(digit, str::from_utf8), FromStr::from_str),
@@ -65,13 +66,13 @@ named!(parse_float<ASTNode>,
 //named!(parse_hex_float<ASTNode>, map_res!(apply!(parse_hexf64, false), |_| ASTNode::Float(0.0f)));
 
 
-named!(pub parse_number<ASTNode>, alt!(
+named!(pub parse_number<ASTNode>, dbg_dmp!(alt!(
             //complete!(parse_hex_float) |
             complete!(parse_hex_int) |
             complete!(parse_float) |
             parse_int |
             parse_int_overflow
-));
+)));
 
 #[cfg(test)]
 mod tests {
@@ -79,9 +80,8 @@ mod tests {
 
     ast_test!(test_parse_int_1, parse_int, "20", ASTNode::Integer(20));
 
-    //TODO: Enable this test
     // Overflowing causes integers to be interperted as floats, thus this should fail
-    //ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520");
+    ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520999999999999");
 
     // preceding +/- are separate ASTNodes
     ast_panic_test!(test_parse_int_4, parse_int, "-20");
@@ -117,9 +117,9 @@ mod tests {
     ast_panic_test!(test_parse_float_13, parse_float, "-20.0");
     ast_panic_test!(test_parse_float_14, parse_float, "+20.0");
 
-    //TODO: Enable these tests
     ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
     ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
     ast_test!(test_parse_number_3, parse_number, "0x20", ASTNode::Integer(0x20));
     ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
+    //ast_panic_test!(test_parse_number_5, parse_number, "10f");
 }

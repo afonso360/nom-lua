@@ -37,22 +37,22 @@ Lua 5.3 parser written with nom
   - [ ] functiondef
   - [ ] prefixexp
   - [ ] tableconstructor
-  - [ ] op (recurse bug)
+  - [x] op
 - [ ] prefixexp (needs to be finished)
 - [ ] functioncall (deps args, prefixexp)
 - [ ] args (deps explist, tableconstructor, LiteralString)
 - [ ] functiondef (deps funcbody)
 - [ ] funcbody (deps parlist, block)
 - [ ] parlist
-- [ ] tableconstructor (deps fieldlist)
-- [ ] fieldlist (deps field)
-- [ ] field (deps exp)
-- [x] fieldsep
+- [x] tableconstructor (needs tests)
+- [x] fieldlist (needs tests)
+- [x] field (needs tests)
+- [x] fieldsep (needs tests)
 - [x] Binop (percedence error)
 - [x] Unop
 - [x] Name
 - [x] Numeral
-  - [X] Digit (does not overflow correctly)
+  - [X] Digit
   - [X] Hex Digit
   - [X] Float
   - [ ] Hex Float
