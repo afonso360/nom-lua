@@ -26,6 +26,10 @@ use hexf_parse::parse_hexf64;
 use super::nom::{digit, hex_digit, double};
 //TODO: LOCALE dependent decimal point!
 
+named!(parse_int_overflow<ASTNode>, map!(
+           map_res!(map_res!(digit, str::from_utf8), FromStr::from_str),
+           ASTNode::Float));
+
 named!(parse_int<ASTNode>, map!(
            map_res!(map_res!(digit, str::from_utf8), FromStr::from_str),
            ASTNode::Integer));
@@ -65,7 +69,8 @@ named!(pub parse_number<ASTNode>, alt!(
             //complete!(parse_hex_float) |
             complete!(parse_hex_int) |
             complete!(parse_float) |
-            parse_int
+            parse_int |
+            parse_int_overflow
 ));
 
 #[cfg(test)]
@@ -116,5 +121,5 @@ mod tests {
     ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
     ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
     ast_test!(test_parse_number_3, parse_number, "0x20", ASTNode::Integer(0x20));
-    //ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
+    ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
 }
