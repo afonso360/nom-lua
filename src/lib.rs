@@ -79,6 +79,23 @@ macro_rules! ast_invalid {
     }
 }
 
+macro_rules! astb {
+    ($name: ident, $($a: expr),*) => {
+        $name($(Box::new($a)),*)
+    };
+}
+
+macro_rules! ast {
+    ($name: ident) => {
+        $name
+    };
+    ($name: ident, $($a: expr),*) => {
+        $name($($a),*)
+    };
+}
+
+
+
 use function::parse_block;
 use ast::ASTNode;
 named!(pub parse_chunk<ASTNode>, ws!(parse_block));

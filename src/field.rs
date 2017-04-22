@@ -32,9 +32,9 @@ named!(pub parse_fieldlist<ASTNode>, map!(map!(
             ), |(a, mut b): (_, Vec <ASTNode>) | { b.insert(0, a); b }),
 Box::new), ASTNode::FieldList));
 
-named!(parse_field<ASTNode>, alt!(
+named!(parse_field<ASTNode>, ws!(alt!(
         do_parse!(
-               n: delimited!(tag!("["), parse_exp, tag!("]"))
+               n: delimited!(tag!("["), ws!(parse_exp), tag!("]"))
             >> ws!(tag!("="))
             >> e: parse_exp
             >> (ASTNode::FieldAssign(Box::new(n),Box::new(e)))) |
@@ -44,11 +44,23 @@ named!(parse_field<ASTNode>, alt!(
             >> e: parse_exp
             >> (ASTNode::FieldAssign(Box::new(n),Box::new(e)))) |
         map!(map!(parse_exp, Box::new), ASTNode::FieldSingle)
-));
+)));
+
 named!(parse_fieldsep, alt!(tag!(",") | tag!(";")));
 
 #[cfg(test)]
 mod tests {
+    use ast::ASTNode::*;
+
     ast_valid!(test_parse_fieldsep_1, parse_fieldsep, ";");
     ast_valid!(test_parse_fieldsep_2, parse_fieldsep, ",");
+
+    ast_test!(test_parse_field_assign_1, parse_field, " [ true ] = true ",
+              astb!(FieldAssign, ast!(Bool, true), ast!(Bool, true)));
+    ast_test!(test_parse_field_assign_2, parse_field, "[true]=nil",
+              astb!(FieldAssign, ast!(Bool, true), ast!(Nil)));
+    ast_test!(test_parse_field_assign_3, parse_field, "is=true",
+              astb!(FieldAssign, ast!(Name, "is".into()), ast!(Bool, true)));
+    ast_test!(test_parse_field_single_1, parse_field, "true",
+              astb!(FieldSingle, ast!(Bool, true)));
 }

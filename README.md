@@ -12,22 +12,22 @@ Lua 5.3 parser written with nom
   - [x] label
   - [x] "break"
   - [x] goto
-  - [ ] do end (deps block)
-  - [ ] while (deps exp, block)
-  - [ ] repeat until (deps exp, block)
-  - [ ] if (deps exp, block)
-  - [ ] for (deps exp, block)
-  - [ ] for in (deps exp, explist, block)
+  - [ ] do end
+  - [ ] while
+  - [ ] repeat until
+  - [ ] if
+  - [ ] for
+  - [ ] for in
   - [ ] function (deps funcname)
-  - [ ] local function (deps block)
+  - [ ] local function
   - [ ] local
 - [x] retstat  (needs tests)
 - [x] label
 - [ ] varlist (deps var)
 - [ ] var (deps prefixexp, exp)
-- [x] namelist
-- [x] explist (deps exp)
-- [x] exp
+- [x] namelist (needs tests)
+- [x] explist (needs tests)
+- [x] exp (needs tests)
   - [x] Numeral
   - [x] Nil
   - [x] Bool
@@ -46,8 +46,8 @@ Lua 5.3 parser written with nom
 - [x] parlist (needs tests)
 - [x] tableconstructor (needs tests)
 - [x] fieldlist (needs tests)
-- [x] field (needs tests)
-- [x] fieldsep (needs tests)
+- [x] field
+- [x] fieldsep
 - [x] Binop (percedence error)
 - [x] Unop
 - [x] Name

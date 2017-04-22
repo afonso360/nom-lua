@@ -94,7 +94,10 @@ pub enum ASTNode {
     ParameterList(Box<Option<ASTNode>>, bool),
 
     // Field
+    /// Contains an expr
     FieldSingle(Box<ASTNode>),
+    /// The first node may be an expr to be resolved or a Name
+    /// The second node is the assigned expr
     FieldAssign(Box<ASTNode>, Box<ASTNode>),
 
     // Local
@@ -109,8 +112,15 @@ impl Display for ASTNode {
             Float(val) => write!(format, "{}f", val),
             Bool(val) => write!(format, "{}", val),
             String(ref val) => write!(format, "\"{}\"", val),
+
+            /// Holds a lua name, usually a function or variable name
+            /// Contains `ASTNode::String`
             Name(ref val) => write!(format, "(name {})", val),
+
+            /// Holds a lua label name
+            /// Contains `ASTNode::Name`
             Label(ref val) => write!(format, "::{}::", val),
+            /// Contains an expression
             Paren(ref expr) => write!(format, "({})", expr),
 
             // Block
