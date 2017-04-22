@@ -20,26 +20,40 @@
 
 
 use ast::ASTNode;
+use statement::{parse_retstat, parse_statement};
+use name::{parse_name, parse_namelist};
 
 // TODO: Needs ws! macros
 
 named!(pub parse_functiondef<ASTNode>,
-       do_parse!(tag!("function") >> f: parse_funcbody >> (ASTNode::Function(f))));
+       do_parse!(tag!("function") >> f: parse_funcbody >> (ASTNode::Function(Box::new(f)))));
 
 named!(pub parse_local_function<ASTNode>, do_parse!(
            tag!("function")
         >> ws!(tag!("function"))
         >> n: parse_name
         >> f: parse_funcbody
-        >> (ASTNode::NamedFunction(n, f))));
+        >> (ASTNode::NamedFunction(Box::new(n), Box::new(f)))));
 
 named!(parse_funcbody<ASTNode>, do_parse!(
-        tag!("(") >>
-        parlist: many0!(parse_parlist) >>
-        tag!(")") >>
-        block: parse_block >>
-        tag!("end") >> (ASTNode::FunctionBody(parlist, block))));
+           tag!("(")
+        >> parlist: opt!(parse_parlist)
+        >> tag!(")")
+        >> block: parse_block
+        >> tag!("end")
+        >> (ASTNode::FunctionBody(Box::new(parlist), Box::new(block)))));
 
-named!(parse_parlist<ASTNode>, unimplemented!());
-named!(parse_block<ASTNode>, unimplemented!());
+named!(parse_parlist<ASTNode>, do_parse!(
+       nl: opt!(parse_namelist)
+    >> opt!(tag!(","))
+    >> va: opt!(tag!("..."))
+    >> (ASTNode::ParameterList(Box::new(nl), va.is_some()))
+));
+
+named!(pub parse_block<ASTNode>, do_parse!(
+           //TODO: many0 or many1?
+           s: many0!(parse_statement)
+        >> rs: opt!(parse_retstat)
+        >> (ASTNode::Block(Box::new(s), Box::new(rs)))
+));
 

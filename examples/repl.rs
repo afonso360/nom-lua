@@ -26,7 +26,7 @@ fn exec_repl() {
     let stdout = std::io::stdout();
     for line in stdin.lock().lines() {
         if let nom_lua::IResult::Done(_, string) =
-            nom_lua::exp::parse_exp(line.expect("Failed to read line").as_bytes()) {
+            nom_lua::parse_chunk(line.expect("Failed to read line").as_bytes()) {
             println!("EVAL: {}", string);
         } else {
             println!("ERROR: Parse Error");

@@ -3,11 +3,11 @@
 Lua 5.3 parser written with nom
 
 # Syntax
-- [ ] chunk (deps block)
-- [ ] block (deps restat)
-- [ ] stat (deps everything)
+- [ ] chunk (needs tests)
+- [ ] block (needs tests)
+- [ ] stat
   - [x] ";"
-  - [ ] varlist = explist (deps explis)
+  - [ ] varlist = explist
   - [ ] functioncall (deps functioncall)
   - [x] label
   - [x] "break"
@@ -20,30 +20,30 @@ Lua 5.3 parser written with nom
   - [ ] for in (deps exp, explist, block)
   - [ ] function (deps funcname)
   - [ ] local function (deps block)
-  - [ ] local (deps explist)
-- [ ] retstat (deps explist)
+  - [ ] local
+- [x] retstat  (needs tests)
 - [x] label
-- [ ] funcname
 - [ ] varlist (deps var)
 - [ ] var (deps prefixexp, exp)
 - [x] namelist
-- [ ] explist (deps exp)
-- [ ] exp
+- [x] explist (deps exp)
+- [x] exp
   - [x] Numeral
   - [x] Nil
   - [x] Bool
   - [x] LiteralString
   - [x] "..."
-  - [ ] functiondef
-  - [ ] prefixexp
-  - [ ] tableconstructor
+  - [x] functiondef
+  - [x] prefixexp
+  - [x] tableconstructor
   - [x] op
 - [ ] prefixexp (needs to be finished)
 - [ ] functioncall (deps args, prefixexp)
 - [ ] args (deps explist, tableconstructor, LiteralString)
-- [ ] functiondef (deps funcbody)
-- [ ] funcbody (deps parlist, block)
-- [ ] parlist
+- [ ] funcname
+- [x] functiondef (needs tests)
+- [x] funcbody (needs tests)
+- [x] parlist (needs tests)
 - [x] tableconstructor (needs tests)
 - [x] fieldlist (needs tests)
 - [x] field (needs tests)

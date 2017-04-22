@@ -31,10 +31,13 @@ pub enum ASTNode {
     Name(String),
     Paren(Box<ASTNode>),
 
+    Block(Box<Vec<ASTNode>>, Box<Option<ASTNode>>),
+
     //Statements
     EmptyStatement,
     Break,
     Goto(Box<ASTNode>),
+    RetStat(Box<Option<ASTNode>>),
 
     // ArithmeticOps
     Add(Box<ASTNode>, Box<ASTNode>),
@@ -80,7 +83,7 @@ pub enum ASTNode {
 
     // Function
     Function(Box<ASTNode>),
-    FunctionBody(Box<ASTNode>, Box<ASTNode>),
+    FunctionBody(Box<Option<ASTNode>>, Box<ASTNode>),
     NamedFunction(Box<ASTNode>, Box<ASTNode>),
 
     // Lists
@@ -88,6 +91,7 @@ pub enum ASTNode {
     VarList(Box<Vec<ASTNode>>),
     NameList(Box<Vec<ASTNode>>),
     FieldList(Box<Vec<ASTNode>>),
+    ParameterList(Box<Option<ASTNode>>, bool),
 
     // Field
     FieldSingle(Box<ASTNode>),
@@ -109,8 +113,12 @@ impl Display for ASTNode {
             Label(ref val) => write!(format, "::{}::", val),
             Paren(ref expr) => write!(format, "({})", expr),
 
+            // Block
+            Block(ref statements, ref retstat) => write!(format, "(block)"),
+
             // Statements
             EmptyStatement => write!(format, "(statement)"),
+            RetStat(ref para) => write!(format, "(ret {:?})", para),
             Break => write!(format, "(break)"),
             Goto(ref loc) => write!(format, "goto {}", loc),
 
@@ -159,13 +167,14 @@ impl Display for ASTNode {
 
             //Function
             Function(ref f) => write!(format, "{}", f),
-            FunctionBody(ref parlist, ref fbody) => write!(format, "function ({}) {}", parlist, fbody),
+            FunctionBody(ref parlist, ref fbody) => write!(format, "function ({:?}) {}", parlist, fbody),
             NamedFunction(ref n, ref f) => write!(format, "(named {} {})", n, f),
 
             //TODO: Make this actually print thecontents
             ExpList(ref explist) => write!(format, "(explist)"),
             VarList(ref varlist) => write!(format, "(varlist)"),
             NameList(ref namelist) => write!(format, "(namelist)"),
+            ParameterList(ref plist, ref va) => write!(format, "(parameterlist, vararg: {})", va),
             FieldList(ref namelist) => write!(format, "(fieldlist)"),
 
             // Field

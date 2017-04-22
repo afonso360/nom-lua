@@ -79,6 +79,9 @@ macro_rules! ast_invalid {
     }
 }
 
+use function::parse_block;
+use ast::ASTNode;
+named!(pub parse_chunk<ASTNode>, ws!(parse_block));
 
 pub mod ast;
 pub mod op;
@@ -89,6 +92,6 @@ pub mod name;
 pub mod var;
 pub mod field;
 pub mod statement;
-//pub mod function;
+pub mod function;
 
 pub use nom::IResult;

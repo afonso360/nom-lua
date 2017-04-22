@@ -23,13 +23,14 @@
 use ast::ASTNode;
 use name::{parse_label, parse_name};
 //use function::parse_local_function;
+use exp::parse_explist;
 
 named!(parse_goto<ASTNode>, map!(map!(preceded!(tag!("goto"), ws!(parse_name)), Box::new), ASTNode::Goto));
 
 named!(parse_semicolon, ws!(tag!(";")));
 named!(parse_semicolon_statement<ASTNode>, map!(parse_semicolon, |_| ASTNode::EmptyStatement));
 
-named!(parse_statement<ASTNode>, alt!(
+named!(pub parse_statement<ASTNode>, alt!(
         parse_semicolon_statement |
         //varlist=explist
         //functioncall
@@ -45,6 +46,10 @@ named!(parse_statement<ASTNode>, alt!(
         //parse_local_function
         //local (deps namelist, explist)
 ));
+
+named!(pub parse_retstat<ASTNode>, map!(map!(
+        delimited!(tag!("return"), ws!(opt!(parse_explist)), opt!(tag!(";"))),
+        Box::new), ASTNode::RetStat));
 
 #[cfg(test)]
 mod tests {

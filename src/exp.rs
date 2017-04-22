@@ -24,7 +24,7 @@ use ast::ASTNode;
 use number::parse_number;
 use op::parse_op;
 use string::parse_string;
-//use function::parse_functiondef;
+use function::parse_functiondef;
 use field::parse_fieldlist;
 
 named!(parse_vararg< ASTNode >, map!(tag!("..."), |_| ASTNode::VarArg));
@@ -52,7 +52,7 @@ named!(pub parse_exp<ASTNode>, alt!(
                 parse_bool |
                 parse_string |
                 parse_vararg |
-                //parse_functiondef |
+                parse_functiondef |
                 parse_prefixexp |
                 parse_tableconstructor
 ));
