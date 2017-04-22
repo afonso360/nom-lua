@@ -23,15 +23,16 @@ use std::str::FromStr;
 use ast::ASTNode;
 
 use super::nom::{digit, hex_digit, double};
+//TODO: LOCALE dependent decimal point!
 
 named!(parse_hex_beginning, recognize!(preceded!(tag!("0"), alt!(tag!("x") | tag!("X")))));
 
-named!(parse_int< ASTNode >,
+named!(parse_int<ASTNode>,
        map!(
            map_res!(map_res!(digit, str::from_utf8), FromStr::from_str),
            ASTNode::Integer));
 
-named!(parse_hex_int< ASTNode >,
+named!(parse_hex_int<ASTNode>,
            do_parse!(
                parse_hex_beginning >>
                hex: map_res!(
@@ -58,49 +59,43 @@ named!(parse_hex_float_exp, recognize!(do_parse!(
             >> ())));
 
 
-named!(parse_float< ASTNode >,
+named!(parse_float<ASTNode>,
        do_parse!(
-              float: map_res!(
-                         map_res!(
-                             recognize!(
-                                 do_parse!(
-                                         alt!(
-                                             delimited!(digit, tag!("."), opt!(complete!(digit))) |
-                                             delimited!(opt!(digit), tag!("."), digit) |
-                                             digit)
-                                         >> opt!(complete!(parse_float_exp))
-                                         >> ())),
-                              str::from_utf8),
-                         FromStr::from_str)
+              float: map_res!( map_res!( recognize!( do_parse!(
+                         alt!(
+                          delimited!(digit, tag!("."), opt!(complete!(digit))) |
+                          delimited!(opt!(digit), tag!("."), digit) |
+                          digit)
+                      >> opt!(complete!(parse_float_exp))
+                      >> ())),
+                  str::from_utf8), FromStr::from_str)
            >> (ASTNode::Float(float)))
       );
 
 
+named!(parse_hex_float<ASTNode>, do_parse!(
+                           parse_hex_beginning
+                        >> float: map_res!(map_res!(recognize!(do_parse!(
+                               alt!(
+                                delimited!(hex_digit, tag!("."), opt!(complete!(hex_digit))) |
+                                delimited!(opt!(hex_digit), tag!("."), hex_digit) |
+                                hex_digit)
 
-
-named!(parse_hex_float< ASTNode >,
-       do_parse!(
-              float: map_res!(
-                         map_res!(
-                             recognize!(
-                                 do_parse!(
-                                         alt!(
-                                             delimited!(hex_digit, tag!("."), opt!(complete!(hex_digit))) |
-                                             delimited!(opt!(hex_digit), tag!("."), hex_digit) |
-                                             hex_digit)
-                                         >> opt!(complete!(parse_float_exp_no_sign))
-                                         >> opt!(complete!(parse_hex_float_exp))
-                                         >> ())),
-                              str::from_utf8),
-                         FromStr::from_str)
+                               //TODO: we need at least one of the following
+                        >> opt!(complete!(parse_float_exp_no_sign))
+                        >> opt!(complete!(parse_hex_float_exp))
+                        >> ())),
+                  str::from_utf8), FromStr::from_str)
            >> (ASTNode::Float(float)))
        );
 
 
-
-
-named!(pub parse_number< ASTNode >,
-       alt!(parse_hex_float | parse_float | parse_hex_int | parse_int));
+named!(pub parse_number<ASTNode>, alt!(
+            //complete!(parse_hex_float) |
+            complete!(parse_hex_int) |
+            complete!(parse_float) |
+            parse_int
+));
 
 #[cfg(test)]
 mod tests {
@@ -147,8 +142,8 @@ mod tests {
     ast_panic_test!(test_parse_float_14, parse_float, "+20.0");
 
 
-
     // More complete tests are needed for this
+    // TODO: overflow on numeral can sill give a valid number
     ast_valid!(test_parse_hex_float_1, parse_hex_float, "0x0.0");
     ast_valid!(test_parse_hex_float_2, parse_hex_float, "0x3.0");
     ast_valid!(test_parse_hex_float_3, parse_hex_float, "0x.1");
@@ -172,9 +167,16 @@ mod tests {
     ast_invalid!(test_parse_hex_float_19, parse_hex_float, "-20.0");
     ast_invalid!(test_parse_hex_float_20, parse_hex_float, "+20.0");
 
+    ast_valid!(test_parse_hex_float_21, parse_hex_float, "0x1p1023");
+    ast_valid!(test_parse_hex_float_22, parse_hex_float, "0x1p1024"); // this is valid but infifnite
+    //ast_valid!(test_parse_hex_float_22, parse_hex_float, "0x1p1024"); // this is valid but infifnite
+
 
     //TODO: Enable these tests
-    //ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
+    ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
     ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
-    //ast_test!(test_parse_number_3, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
+    ast_test!(test_parse_number_3, parse_number, "0x20", ASTNode::Integer(0x20));
+    ast_test!(test_parse_number_4, parse_number, "0x20p1", ASTNode::Float(64.0));
+    //ast_test!(test_parse_number_3, parse_number, "10", ASTNode::Integer(10));
+    //ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
 }

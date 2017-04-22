@@ -45,9 +45,9 @@ named!(pub parse_explist<ASTNode>, map!(map!(
             ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
 Box::new), ASTNode::ExpList));
 
-named!(pub parse_exp<ASTNode>, dbg!(complete!(alt!(
+named!(pub parse_exp<ASTNode>, alt!(
                 parse_op |
-                parse_number |
+                //parse_number | // parse_number is embedded in parse_op
                 parse_nil |
                 parse_bool |
                 parse_string |
@@ -55,7 +55,7 @@ named!(pub parse_exp<ASTNode>, dbg!(complete!(alt!(
                 //parse_functiondef |
                 parse_prefixexp
 //                parse_tableconstructior
-            ))));
+            ));
 
 // TODO: Missing tests
 //named!(parse_tableconstructor< ASTNode >,

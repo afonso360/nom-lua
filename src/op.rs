@@ -33,42 +33,30 @@ use ast::ASTNode;
 use super::exp::parse_exp;
 use super::number::parse_number;
 
-//This is marked just for convenience so users know where to enter
-named!(pub parse_op<ASTNode>, dbg!(alt!(parse_unop | parse_binop)));
+//named!(pub parse_op<ASTNode>, dbg_dmp!(alt!(parse_exponent | parse_unop | parse_binop)));
+// for some reason we have to use the map
+named!(pub parse_op<ASTNode>, map!(parse_exponent, |a|a));
 
-fn fold_binop(bop: BinOp, left: ASTNode, right: ASTNode) -> ASTNode {
-    match bop {
-        BinOp::Exp => ASTNode::Exp(Box::new(left), Box::new(right)),
-        BinOp::Mul => ASTNode::Mul(Box::new(left), Box::new(right)),
-        BinOp::Div => ASTNode::Div(Box::new(left), Box::new(right)),
-        BinOp::FDiv => ASTNode::FDiv(Box::new(left), Box::new(right)),
-        BinOp::Mod => ASTNode::Mod(Box::new(left), Box::new(right)),
-        BinOp::Add => ASTNode::Add(Box::new(left), Box::new(right)),
-        BinOp::Sub => ASTNode::Sub(Box::new(left), Box::new(right)),
-        BinOp::Concat => ASTNode::Concat(Box::new(left), Box::new(right)),
-        BinOp::Lsh => ASTNode::Lsh(Box::new(left), Box::new(right)),
-        BinOp::Rsh => ASTNode::Rsh(Box::new(left), Box::new(right)),
-        BinOp::BitAnd => ASTNode::BitAnd(Box::new(left), Box::new(right)),
-        BinOp::BitXor => ASTNode::BitXor(Box::new(left), Box::new(right)),
-        BinOp::BitOr => ASTNode::BitOr(Box::new(left), Box::new(right)),
-        BinOp::Lt => ASTNode::Lt(Box::new(left), Box::new(right)),
-        BinOp::Gt => ASTNode::Gt(Box::new(left), Box::new(right)),
-        BinOp::Le => ASTNode::Le(Box::new(left), Box::new(right)),
-        BinOp::Ge => ASTNode::Ge(Box::new(left), Box::new(right)),
-        BinOp::Ne => ASTNode::Ne(Box::new(left), Box::new(right)),
-        BinOp::Eq => ASTNode::Eq(Box::new(left), Box::new(right)),
-        BinOp::And => ASTNode::And(Box::new(left), Box::new(right)),
-        BinOp::Or => ASTNode::Or(Box::new(left), Box::new(right)),
-    }
-}
+named!(parse_unop<ASTNode>, do_parse!(
+           unop: many0!(unop)
+        >> right: parse_binop
+        >> (fold_unop(unop, right))));
 
-named!(pub parse_binop<ASTNode>, do_parse!(
-        left: parse_exp >>
-        bop: binop >>
-        right: parse_exp >> (fold_binop(bop, left, right))));
+named!(parse_binop<ASTNode>, do_parse!(
+           left: parse_atom
+        >> right: many0!(do_parse!(bop: binop >> right: parse_atom >> (bop, right)))
+        >> (fold_binop(left, right))));
+
+named!(parse_exponent<ASTNode>, do_parse!(
+           left: parse_unop
+        >> right: many0!(do_parse!(xp: exponent >> right: parse_unop >> (xp, right)))
+        >> (fold_binop(left, right))));
+
+named!(parse_atom<ASTNode>, alt!(parse_number | delimited!(tag!("("), ws!(parse_exp), tag!(")"))));
+
+named!(exponent<BinOp>, map!(ws!(tag!("^")), |_| BinOp::Exp));
 
 named!(binop<BinOp>, alt!(
-    ws!(tag!("^"))   => { |_| BinOp::Exp } |
     ws!(tag!("*"))   => { |_| BinOp::Mul } |
     ws!(tag!("/"))   => { |_| BinOp::Div } |
     ws!(tag!("//"))  => { |_| BinOp::FDiv } |
@@ -117,19 +105,50 @@ pub enum BinOp {
 }
 
 
-named!(parse_unop<ASTNode>, do_parse!(
-        unop: unop >>
-        right: parse_exp >> (fold_unop(unop, right))));
-
-
-fn fold_unop(unop: UnOp, right: ASTNode) -> ASTNode {
-    match unop {
-        UnOp::BinNot => ASTNode::BinNot(Box::new(right)),
-        UnOp::Not => ASTNode::Not(Box::new(right)),
-        UnOp::Len => ASTNode::Len(Box::new(right)),
-        UnOp::UMin => ASTNode::UMin(Box::new(right)),
-    }
+fn fold_unop(unop: Vec<UnOp>, initial: ASTNode) -> ASTNode {
+    unop.into_iter().fold(initial, |acc, op| {
+        println!("Proc unop: {:?}", op);
+        match op {
+            UnOp::BinNot => ASTNode::BinNot(Box::new(acc)),
+            UnOp::Not => ASTNode::Not(Box::new(acc)),
+            UnOp::Len => ASTNode::Len(Box::new(acc)),
+            UnOp::UMin => ASTNode::UMin(Box::new(acc)),
+        }
+    })
 }
+
+fn fold_binop(left: ASTNode, remainder: Vec<(BinOp, ASTNode)>) -> ASTNode {
+    remainder.into_iter().fold(left, |acc, pair| {
+        let (op, right) = pair;
+        println!("Proc binop: {:?}", op);
+        match op {
+            //TODO: This is right Associative, we need to invert this operation
+            BinOp::Exp => ASTNode::Exp(Box::new(acc), Box::new(right)),
+            BinOp::Mul => ASTNode::Mul(Box::new(acc), Box::new(right)),
+            BinOp::Div => ASTNode::Div(Box::new(acc), Box::new(right)),
+            BinOp::FDiv => ASTNode::FDiv(Box::new(acc), Box::new(right)),
+            BinOp::Mod => ASTNode::Mod(Box::new(acc), Box::new(right)),
+            BinOp::Add => ASTNode::Add(Box::new(acc), Box::new(right)),
+            BinOp::Sub => ASTNode::Sub(Box::new(acc), Box::new(right)),
+            //TODO: This is right Associative, we need to invert this operation
+            BinOp::Concat => ASTNode::Concat(Box::new(acc), Box::new(right)),
+            BinOp::Lsh => ASTNode::Lsh(Box::new(acc), Box::new(right)),
+            BinOp::Rsh => ASTNode::Rsh(Box::new(acc), Box::new(right)),
+            BinOp::BitAnd => ASTNode::BitAnd(Box::new(acc), Box::new(right)),
+            BinOp::BitXor => ASTNode::BitXor(Box::new(acc), Box::new(right)),
+            BinOp::BitOr => ASTNode::BitOr(Box::new(acc), Box::new(right)),
+            BinOp::Lt => ASTNode::Lt(Box::new(acc), Box::new(right)),
+            BinOp::Gt => ASTNode::Gt(Box::new(acc), Box::new(right)),
+            BinOp::Le => ASTNode::Le(Box::new(acc), Box::new(right)),
+            BinOp::Ge => ASTNode::Ge(Box::new(acc), Box::new(right)),
+            BinOp::Ne => ASTNode::Ne(Box::new(acc), Box::new(right)),
+            BinOp::Eq => ASTNode::Eq(Box::new(acc), Box::new(right)),
+            BinOp::And => ASTNode::And(Box::new(acc), Box::new(right)),
+            BinOp::Or => ASTNode::Or(Box::new(acc), Box::new(right)),
+        }
+    })
+}
+
 
 // TODO: Change to be just preceded by whitespace
 named!(pub unop<UnOp>, alt!(

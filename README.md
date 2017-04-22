@@ -4,7 +4,7 @@ Lua 5.3 parser written with nom
 
 # Syntax
 - [ ] chunk (deps block)
-- [ ] block (deps stat, restat)
+- [ ] block (deps restat)
 - [ ] stat (deps everything)
   - [x] ";"
   - [ ] varlist = explist (deps explis)
@@ -20,8 +20,8 @@ Lua 5.3 parser written with nom
   - [ ] for in (deps exp, explist, block)
   - [ ] function (deps funcname)
   - [ ] local function (deps block)
-  - [ ] local (deps namelist, explist)
-- [ ] retstat
+  - [ ] local (deps explist)
+- [ ] retstat (deps explist)
 - [x] label
 - [ ] funcname
 - [ ] varlist (deps var)
@@ -34,7 +34,7 @@ Lua 5.3 parser written with nom
   - [x] Bool
   - [x] LiteralString
   - [x] "..."
-  - [ ] functiondef - can be done
+  - [ ] functiondef
   - [ ] prefixexp
   - [ ] tableconstructor
   - [ ] op (recurse bug)
@@ -46,7 +46,7 @@ Lua 5.3 parser written with nom
 - [ ] parlist
 - [ ] tableconstructor (deps fieldlist)
 - [ ] fieldlist (deps field)
-- [ ] field (deps, exp)
+- [ ] field (deps exp)
 - [x] fieldsep
 - [x] Binop (percedence error)
 - [x] Unop
