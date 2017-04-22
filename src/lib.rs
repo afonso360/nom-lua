@@ -27,6 +27,9 @@
 #[macro_use]
 extern crate nom;
 
+#[macro_use]
+extern crate hexf_parse;
+
 extern crate std_unicode;
 
 // this is going to be usefull when looking at this crate
