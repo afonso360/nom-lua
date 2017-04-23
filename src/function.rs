@@ -44,9 +44,9 @@ named!(parse_funcbody<ASTNode>, do_parse!(
         >> (ASTNode::FunctionBody(Box::new(parlist), Box::new(block)))));
 
 named!(parse_parlist<ASTNode>, do_parse!(
-       nl: opt!(parse_namelist)
-    >> opt!(tag!(","))
-    >> va: opt!(tag!("..."))
+       nl: opt!(complete!(parse_namelist))
+    >> opt!(complete!(ws!(tag!(","))))
+    >> va: opt!(complete!(ws!(tag!("..."))))
     >> (ASTNode::ParameterList(Box::new(nl), va.is_some()))
 ));
 
@@ -56,4 +56,31 @@ named!(pub parse_block<ASTNode>, do_parse!(
         >> rs: opt!(parse_retstat)
         >> (ASTNode::Block(Box::new(s), Box::new(rs)))
 ));
+
+#[cfg(test)]
+mod tests {
+    use ast::ASTNode::*;
+
+    ast_test!(parse_parlist_1, parse_parlist, "...",
+              ast!(ParameterList, Box::new(None), true));
+
+    ast_test!(parse_parlist_2, parse_parlist, "",
+              ast!(ParameterList, Box::new(None), false));
+
+    ast_test!(parse_parlist_3, parse_parlist, "name , ...",
+              ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+                ast!(Name, "name".into())
+              ]))), true));
+
+    ast_test!(parse_parlist_5, parse_parlist, "a,b",
+              ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+                ast!(Name, "a".into()),
+                ast!(Name, "b".into())
+              ]))), false));
+
+
+
+    //ast_test!(test_parse_block_1, parse_block, "");
+    //ast_test!(test_parse_funcbody_1, parse_funcbody, "");
+}
 
