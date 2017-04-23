@@ -21,6 +21,7 @@
 use std::str;
 use std::str::FromStr;
 use ast::ASTNode;
+use ast::ASTNode::*;
 //use hexf_parse::parse_hexf64;
 
 use super::nom::{digit, hex_digit};
@@ -41,7 +42,7 @@ named!(parse_hex_int<ASTNode>,
                hex: map_res!(
                      map_res!(hex_digit, str::from_utf8),
                     |h| i64::from_str_radix(h, 16))
-               >> (ASTNode::Integer(hex))));
+               >> (ast!(Integer, hex))));
 
 named!(parse_float_exp, recognize!(do_parse!(
                alt!(tag!("e") | tag!("E"))
@@ -59,7 +60,7 @@ named!(parse_float<ASTNode>,
                       >> opt!(complete!(parse_float_exp))
                       >> ())),
                   str::from_utf8), FromStr::from_str)
-           >> (ASTNode::Float(float)))
+           >> (ast!(Float, float)))
       );
 
 
@@ -78,7 +79,7 @@ named!(pub parse_number<ASTNode>, dbg_dmp!(alt!(
 mod tests {
     //The tests panic because the macro calls unwrap, otherwise they should fail gracefully
 
-    ast_test!(test_parse_int_1, parse_int, "20", ASTNode::Integer(20));
+    ast_test!(test_parse_int_1, parse_int, "20", ast!(Integer, 20));
 
     // Overflowing causes integers to be interperted as floats, thus this should fail
     ast_panic_test!(test_parse_int_3, parse_int, "5678987656789876520999999999999");
@@ -88,11 +89,11 @@ mod tests {
     ast_panic_test!(test_parse_int_5, parse_int, "+20");
 
 
-    ast_test!(test_parse_hex_1, parse_hex_int, "0X20", ASTNode::Integer(0x20));
-    ast_test!(test_parse_hex_2, parse_hex_int, "0x20", ASTNode::Integer(0x20));
-    ast_test!(test_parse_hex_3, parse_hex_int, "0x20a", ASTNode::Integer(0x20A));
-    ast_test!(test_parse_hex_4, parse_hex_int, "0x20aB", ASTNode::Integer(0x20AB));
-    ast_test!(test_parse_hex_5, parse_hex_int, "0X20F", ASTNode::Integer(0x20F));
+    ast_test!(test_parse_hex_1, parse_hex_int, "0X20", ast!(Integer, 0x20));
+    ast_test!(test_parse_hex_2, parse_hex_int, "0x20", ast!(Integer, 0x20));
+    ast_test!(test_parse_hex_3, parse_hex_int, "0x20a", ast!(Integer, 0x20A));
+    ast_test!(test_parse_hex_4, parse_hex_int, "0x20aB", ast!(Integer, 0x20AB));
+    ast_test!(test_parse_hex_5, parse_hex_int, "0X20F", ast!(Integer, 0x20F));
     // need 0x preceding to parse sucessfully
     ast_panic_test!(test_parse_hex_6, parse_hex_int, "20");
     // preceding +/- are separate ASTNodes
@@ -100,26 +101,26 @@ mod tests {
     ast_panic_test!(test_parse_hex_8, parse_hex_int, "+0x20");
 
 
-    ast_test!(test_parse_float_1, parse_float, "3.0", ASTNode::Float(3.0));
-    ast_test!(test_parse_float_2, parse_float, ".1", ASTNode::Float(0.1));
-    ast_test!(test_parse_float_3, parse_float, "1.", ASTNode::Float(1.0));
-    ast_test!(test_parse_float_4, parse_float, "3.1416", ASTNode::Float(3.1416));
-    ast_test!(test_parse_float_5, parse_float, "314.16e-2", ASTNode::Float(314.16e-2));
-    ast_test!(test_parse_float_6, parse_float, "0.31416E1", ASTNode::Float(0.31416E1));
-    ast_test!(test_parse_float_7, parse_float, "34e1", ASTNode::Float(340.0));
-    ast_test!(test_parse_float_8, parse_float, "34e+1", ASTNode::Float(340.0));
-    ast_test!(test_parse_float_9, parse_float, "34e-1", ASTNode::Float(3.4));
-    ast_test!(test_parse_float_10, parse_float, "34.e-1", ASTNode::Float(3.4));
-    ast_test!(test_parse_float_11, parse_float, ".2e1", ASTNode::Float(2.0));
+    ast_test!(test_parse_float_1, parse_float, "3.0", ast!(Float, 3.0));
+    ast_test!(test_parse_float_2, parse_float, ".1", ast!(Float, 0.1));
+    ast_test!(test_parse_float_3, parse_float, "1.", ast!(Float, 1.0));
+    ast_test!(test_parse_float_4, parse_float, "3.1416", ast!(Float, 3.1416));
+    ast_test!(test_parse_float_5, parse_float, "314.16e-2", ast!(Float, 314.16e-2));
+    ast_test!(test_parse_float_6, parse_float, "0.31416E1", ast!(Float, 0.31416E1));
+    ast_test!(test_parse_float_7, parse_float, "34e1", ast!(Float, 340.0));
+    ast_test!(test_parse_float_8, parse_float, "34e+1", ast!(Float, 340.0));
+    ast_test!(test_parse_float_9, parse_float, "34e-1", ast!(Float, 3.4));
+    ast_test!(test_parse_float_10, parse_float, "34.e-1", ast!(Float, 3.4));
+    ast_test!(test_parse_float_11, parse_float, ".2e1", ast!(Float, 2.0));
     ast_panic_test!(test_parse_float_12, parse_float, ".e1");
 
     // preceding +/- are separate ASTNodes
     ast_panic_test!(test_parse_float_13, parse_float, "-20.0");
     ast_panic_test!(test_parse_float_14, parse_float, "+20.0");
 
-    ast_test!(test_parse_number_1, parse_number, "20", ASTNode::Integer(20));
-    ast_test!(test_parse_number_2, parse_number, "20.0", ASTNode::Float(20.0));
-    ast_test!(test_parse_number_3, parse_number, "0x20", ASTNode::Integer(0x20));
-    ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ASTNode::Float(1e+24));
+    ast_test!(test_parse_number_1, parse_number, "20", ast!(Integer, 20));
+    ast_test!(test_parse_number_2, parse_number, "20.0", ast!(Float, 20.0));
+    ast_test!(test_parse_number_3, parse_number, "0x20", ast!(Integer, 0x20));
+    ast_test!(test_parse_number_4, parse_number, "1000000000000000000000000", ast!(Float, 1e+24));
     //ast_panic_test!(test_parse_number_5, parse_number, "10f");
 }

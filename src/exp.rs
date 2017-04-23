@@ -20,6 +20,7 @@
 
 
 use ast::ASTNode;
+use ast::ASTNode::*;
 
 use number::parse_number;
 use op::parse_op;
@@ -27,12 +28,12 @@ use string::parse_string;
 use function::parse_functiondef;
 use field::parse_fieldlist;
 
-named!(parse_vararg< ASTNode >, map!(tag!("..."), |_| ASTNode::VarArg));
-named!(parse_nil< ASTNode >, map!(tag!("nil"), |_| ASTNode::Nil));
-named!(parse_bool< ASTNode >, alt!(map!(tag!("false"), |_| ASTNode::Bool(false)) |
-                                   map!(tag!("true"), |_| ASTNode::Bool(true))));
+named!(parse_vararg<ASTNode>, map!(tag!("..."), |_| ast!(VarArg)));
+named!(parse_nil<ASTNode>, map!(tag!("nil"), |_| ast!(Nil)));
+named!(parse_bool<ASTNode>, alt!(map!(tag!("false"), |_| ast!(Bool, false)) |
+                                 map!(tag!("true"), |_| ast!(Bool, true))));
 
-named!(parse_prefixexp< ASTNode >, alt!(
+named!(parse_prefixexp<ASTNode>, alt!(
         //parse_var |
         //parse_functioncall |
         delimited!(tag!("("), ws!(parse_exp), tag!(")"))

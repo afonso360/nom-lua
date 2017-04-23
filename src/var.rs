@@ -20,6 +20,7 @@
 
 
 use ast::ASTNode;
+use ast::ASTNode::*;
 
 // TODO: Should work, Needs tests
 //named!(pub parse_varlist<ASTNode>, map!(map!(

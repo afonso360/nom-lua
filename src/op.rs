@@ -28,6 +28,7 @@
 use std::str;
 
 use ast::ASTNode;
+use ast::ASTNode::*;
 use super::exp::parse_exp;
 use super::number::parse_number;
 
@@ -107,10 +108,10 @@ fn fold_unop(unop: Vec<UnOp>, initial: ASTNode) -> ASTNode {
     unop.into_iter().fold(initial, |acc, op| {
         println!("Proc unop: {:?}", op);
         match op {
-            UnOp::BinNot => ASTNode::BinNot(Box::new(acc)),
-            UnOp::Not => ASTNode::Not(Box::new(acc)),
-            UnOp::Len => ASTNode::Len(Box::new(acc)),
-            UnOp::UMin => ASTNode::UMin(Box::new(acc)),
+            UnOp::BinNot => astb!(BinNot, acc),
+            UnOp::Not => astb!(Not, acc),
+            UnOp::Len => astb!(Len, acc),
+            UnOp::UMin => astb!(UMin, acc),
         }
     })
 }
@@ -121,28 +122,28 @@ fn fold_binop(left: ASTNode, remainder: Vec<(BinOp, ASTNode)>) -> ASTNode {
         println!("Proc binop: {:?}", op);
         match op {
             //TODO: This is right Associative, we need to invert this operation
-            BinOp::Exp => ASTNode::Exp(Box::new(acc), Box::new(right)),
-            BinOp::Mul => ASTNode::Mul(Box::new(acc), Box::new(right)),
-            BinOp::Div => ASTNode::Div(Box::new(acc), Box::new(right)),
-            BinOp::FDiv => ASTNode::FDiv(Box::new(acc), Box::new(right)),
-            BinOp::Mod => ASTNode::Mod(Box::new(acc), Box::new(right)),
-            BinOp::Add => ASTNode::Add(Box::new(acc), Box::new(right)),
-            BinOp::Sub => ASTNode::Sub(Box::new(acc), Box::new(right)),
+            BinOp::Exp => astb!(Exp, acc, right),
+            BinOp::Mul => astb!(Mul, acc, right),
+            BinOp::Div => astb!(Div, acc, right),
+            BinOp::FDiv => astb!(FDiv, acc, right),
+            BinOp::Mod => astb!(Mod, acc, right),
+            BinOp::Add => astb!(Add, acc, right),
+            BinOp::Sub => astb!(Sub, acc, right),
             //TODO: This is right Associative, we need to invert this operation
-            BinOp::Concat => ASTNode::Concat(Box::new(acc), Box::new(right)),
-            BinOp::Lsh => ASTNode::Lsh(Box::new(acc), Box::new(right)),
-            BinOp::Rsh => ASTNode::Rsh(Box::new(acc), Box::new(right)),
-            BinOp::BitAnd => ASTNode::BitAnd(Box::new(acc), Box::new(right)),
-            BinOp::BitXor => ASTNode::BitXor(Box::new(acc), Box::new(right)),
-            BinOp::BitOr => ASTNode::BitOr(Box::new(acc), Box::new(right)),
-            BinOp::Lt => ASTNode::Lt(Box::new(acc), Box::new(right)),
-            BinOp::Gt => ASTNode::Gt(Box::new(acc), Box::new(right)),
-            BinOp::Le => ASTNode::Le(Box::new(acc), Box::new(right)),
-            BinOp::Ge => ASTNode::Ge(Box::new(acc), Box::new(right)),
-            BinOp::Ne => ASTNode::Ne(Box::new(acc), Box::new(right)),
-            BinOp::Eq => ASTNode::Eq(Box::new(acc), Box::new(right)),
-            BinOp::And => ASTNode::And(Box::new(acc), Box::new(right)),
-            BinOp::Or => ASTNode::Or(Box::new(acc), Box::new(right)),
+            BinOp::Concat => astb!(Concat, acc, right),
+            BinOp::Lsh => astb!(Lsh, acc, right),
+            BinOp::Rsh => astb!(Rsh, acc, right),
+            BinOp::BitAnd => astb!(BitAnd, acc, right),
+            BinOp::BitXor => astb!(BitXor, acc, right),
+            BinOp::BitOr => astb!(BitOr, acc, right),
+            BinOp::Lt => astb!(Lt, acc, right),
+            BinOp::Gt => astb!(Gt, acc, right),
+            BinOp::Le => astb!(Le, acc, right),
+            BinOp::Ge => astb!(Ge, acc, right),
+            BinOp::Ne => astb!(Ne, acc, right),
+            BinOp::Eq => astb!(Eq, acc, right),
+            BinOp::And => astb!(And, acc, right),
+            BinOp::Or => astb!(Or, acc, right),
         }
     })
 }

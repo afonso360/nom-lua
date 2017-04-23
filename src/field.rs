@@ -21,6 +21,7 @@
 
 
 use ast::ASTNode;
+use ast::ASTNode::*;
 use exp::parse_exp;
 use name::parse_name;
 
@@ -37,12 +38,12 @@ named!(parse_field<ASTNode>, ws!(alt!(
                n: delimited!(tag!("["), ws!(parse_exp), tag!("]"))
             >> ws!(tag!("="))
             >> e: parse_exp
-            >> (ASTNode::FieldAssign(Box::new(n),Box::new(e)))) |
+            >> (astb!(FieldAssign, n, e)))|
         do_parse!(
                n: parse_name
             >> ws!(tag!("="))
             >> e: parse_exp
-            >> (ASTNode::FieldAssign(Box::new(n),Box::new(e)))) |
+            >> (astb!(FieldAssign, n, e)))|
         map!(map!(parse_exp, Box::new), ASTNode::FieldSingle)
 )));
 
