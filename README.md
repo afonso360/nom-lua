@@ -4,7 +4,7 @@ Lua 5.3 parser written with nom
 
 # Syntax
 - [ ] chunk (needs tests)
-- [ ] block (needs tests)
+- [x] block
 - [ ] stat
   - [x] ";"
   - [ ] varlist = explist
@@ -41,9 +41,9 @@ Lua 5.3 parser written with nom
 - [ ] functioncall (deps args, prefixexp)
 - [ ] args (deps explist, tableconstructor, LiteralString)
 - [ ] funcname
-- [x] functiondef (needs tests)
-- [x] funcbody (needs tests)
-- [x] parlist (needs tests)
+- [x] functiondef
+- [x] funcbody
+- [x] parlist
 - [x] tableconstructor (needs tests)
 - [x] fieldlist (needs tests)
 - [x] field

@@ -27,7 +27,7 @@ use name::{parse_name, parse_namelist};
 // TODO: Needs ws! macros
 
 named!(pub parse_functiondef<ASTNode>,
-       do_parse!(tag!("function") >> f: parse_funcbody >> (astb!(Function, f))));
+       do_parse!(tag!("function") >> f: ws!(parse_funcbody) >> (astb!(Function, f))));
 
 named!(pub parse_local_function<ASTNode>, do_parse!(
            tag!("local")
@@ -90,5 +90,29 @@ mod tests {
         ast!(Float, 1.0)
     ]))))));
 
-    //ast_test!(parse_funcbody_1, parse_funcbody, "");
+
+    ast_test!(parse_funcbody_1, parse_funcbody, "( a, b ) ; end",
+        astb!(FunctionBody,
+              Some(ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+                ast!(Name, "a".into()),
+                ast!(Name, "b".into())
+              ]))), false)),
+              astb!(Block, vec![
+                ast!(EmptyStatement)
+              ], None)));
+
+    ast_test!(parse_functiondef_1, parse_functiondef, "function (...) ; end",
+        astb!(Function,
+         astb!(FunctionBody,
+              Some(ast!(ParameterList, Box::new(None), true)),
+              astb!(Block, vec![ ast!(EmptyStatement) ], None))));
+
+    ast_test!(parse_local_function_1, parse_local_function, "local function b() ; end",
+        astb!(NamedFunction,
+              ast!(Name, "b".into()),
+              astb!(FunctionBody,
+                    Some(ast!(ParameterList, Box::new(None), false)),
+                    astb!(Block, vec![ ast!(EmptyStatement) ], None))));
 }
+//		 function funcname funcbody |
+//		 local function Name funcbody |

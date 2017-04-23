@@ -82,8 +82,11 @@ pub enum ASTNode {
     TableConstructor(Box<Option<ASTNode>>),
 
     // Function
+    /// Takes a FunctionBody
     Function(Box<ASTNode>),
+    /// Takes a ParameterList and a Block
     FunctionBody(Box<Option<ASTNode>>, Box<ASTNode>),
+    /// Takes a Name and a FunctionBody
     NamedFunction(Box<ASTNode>, Box<ASTNode>),
 
     // Lists
