@@ -29,19 +29,18 @@ named!(pub parse_functiondef<ASTNode>,
        do_parse!(tag!("function") >> f: parse_funcbody >> (ASTNode::Function(Box::new(f)))));
 
 named!(pub parse_local_function<ASTNode>, do_parse!(
-           tag!("function")
+           tag!("local")
         >> ws!(tag!("function"))
         >> n: parse_name
         >> f: parse_funcbody
         >> (ASTNode::NamedFunction(Box::new(n), Box::new(f)))));
 
 named!(parse_funcbody<ASTNode>, do_parse!(
-           tag!("(")
-        >> parlist: opt!(parse_parlist)
-        >> tag!(")")
-        >> block: parse_block
+           parlist: delimited!(tag!("("), opt!(ws!(parse_parlist)), tag!(")"))
+        >> block: ws!(parse_block)
         >> tag!("end")
         >> (ASTNode::FunctionBody(Box::new(parlist), Box::new(block)))));
+
 
 named!(parse_parlist<ASTNode>, do_parse!(
        nl: opt!(complete!(parse_namelist))
@@ -50,6 +49,7 @@ named!(parse_parlist<ASTNode>, do_parse!(
     >> (ASTNode::ParameterList(Box::new(nl), va.is_some()))
 ));
 
+    use ast::ASTNode::*;
 named!(pub parse_block<ASTNode>, do_parse!(
            s: many0!(complete!(parse_statement))
         >> rs: opt!(ws!(complete!(parse_retstat)))
@@ -90,7 +90,5 @@ mod tests {
         ast!(Float, 1.0)
     ]))))));
 
-    //ast_test!(parse_block_4, parse_block, "", astb!(Block, vec![], None));
     //ast_test!(parse_funcbody_1, parse_funcbody, "");
 }
-
