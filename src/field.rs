@@ -53,15 +53,15 @@ named!(parse_fieldsep, alt!(tag!(",") | tag!(";")));
 mod tests {
     use ast::ASTNode::*;
 
-    ast_valid!(test_parse_fieldsep_1, parse_fieldsep, ";");
-    ast_valid!(test_parse_fieldsep_2, parse_fieldsep, ",");
+    ast_valid!(parse_fieldsep_1, parse_fieldsep, ";");
+    ast_valid!(parse_fieldsep_2, parse_fieldsep, ",");
 
-    ast_test!(test_parse_field_assign_1, parse_field, " [ true ] = true ",
+    ast_test!(parse_field_assign_1, parse_field, " [ true ] = true ",
               astb!(FieldAssign, ast!(Bool, true), ast!(Bool, true)));
-    ast_test!(test_parse_field_assign_2, parse_field, "[true]=nil",
+    ast_test!(parse_field_assign_2, parse_field, "[true]=nil",
               astb!(FieldAssign, ast!(Bool, true), ast!(Nil)));
-    ast_test!(test_parse_field_assign_3, parse_field, "is=true",
+    ast_test!(parse_field_assign_3, parse_field, "is=true",
               astb!(FieldAssign, ast!(Name, "is".into()), ast!(Bool, true)));
-    ast_test!(test_parse_field_single_1, parse_field, "true",
+    ast_test!(parse_field_single_1, parse_field, "true",
               astb!(FieldSingle, ast!(Bool, true)));
 }
