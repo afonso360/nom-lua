@@ -70,25 +70,23 @@ named!(parse_tableconstructor<ASTNode>,
 
 #[cfg(test)]
 mod tests {
-    ast_test!(test_parse_nil, parse_nil, "nil", ASTNode::Nil);
-    ast_test!(test_parse_bool_t, parse_bool, "true", ASTNode::Bool(true));
-    ast_test!(test_parse_bool_f, parse_bool, "false", ASTNode::Bool(false));
-    ast_test!(test_parse_vararg, parse_vararg, "...", ASTNode::VarArg);
+    use ast::ASTNode::*;
 
-    //TODO: Uncomment these tests once exp is working
-    //ast_test!(test_parse_explist_1, parse_explist, "true", ASTNode::ExpList(Box::new(vec![
-    //    ASTNode::Bool(true),
-    //])));
-    //ast_test!(test_parse_explist_2, parse_explist, "true , true", ASTNode::ExpList(Box::new(vec![
-    //    ASTNode::Bool(true),
-    //    ASTNode::Bool(true),
-    //])));
-    //ast_test!(test_parse_explist_3, parse_explist, "true , false, false", ASTNode::ExpList(Box::new(vec![
-    //    ASTNode::Bool(true),
-    //    ASTNode::Bool(false),
-    //    ASTNode::Bool(false),
-    //])));
+    ast_test!(parse_nil, parse_nil, "nil", ast!(Nil));
+    ast_test!(parse_bool_t, parse_bool, "true", ast!(Bool, true));
+    ast_test!(parse_bool_f, parse_bool, "false", ast!(Bool, false));
+    ast_test!(parse_vararg, parse_vararg, "...", ast!(VarArg));
 
-    //make a generalized example of this test, ie: any random char after a tag
-    //ast_panic_test!(test_parse_vararg_false, parse_vararg, "....", ASTNode::VarArg);
+    ast_test!(parse_explist_1, parse_explist, "true", astb!(ExpList, vec![
+        ast!(Bool, true)
+    ]));
+    ast_test!(parse_explist_2, parse_explist, "true , true", astb!(ExpList, vec![
+        ast!(Bool, true),
+        ast!(Bool, true)
+    ]));
+    ast_test!(parse_explist_3, parse_explist, "true , false, false", astb!(ExpList, vec![
+        ast!(Bool, true),
+        ast!(Bool, false),
+        ast!(Bool, false)
+    ]));
 }

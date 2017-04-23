@@ -51,9 +51,8 @@ named!(parse_parlist<ASTNode>, do_parse!(
 ));
 
 named!(pub parse_block<ASTNode>, do_parse!(
-           //TODO: many0 or many1?
-           s: many0!(parse_statement)
-        >> rs: opt!(parse_retstat)
+           s: many0!(complete!(parse_statement))
+        >> rs: opt!(ws!(complete!(parse_retstat)))
         >> (ASTNode::Block(Box::new(s), Box::new(rs)))
 ));
 
@@ -80,7 +79,18 @@ mod tests {
 
 
 
-    //ast_test!(test_parse_block_1, parse_block, "");
-    //ast_test!(test_parse_funcbody_1, parse_funcbody, "");
+    ast_test!(parse_block_1, parse_block, "", astb!(Block, vec![], None));
+    ast_test!(parse_block_2, parse_block, "::a::", astb!(Block, vec![
+        ast!(Label, "a".into())
+    ], None));
+
+    ast_test!(parse_block_3, parse_block, "::b:: return 1.0", astb!(Block, vec![
+        ast!(Label, "b".into())
+    ], Some(astb!(RetStat, Some(astb!(ExpList, vec![
+        ast!(Float, 1.0)
+    ]))))));
+
+    //ast_test!(parse_block_4, parse_block, "", astb!(Block, vec![], None));
+    //ast_test!(parse_funcbody_1, parse_funcbody, "");
 }
 

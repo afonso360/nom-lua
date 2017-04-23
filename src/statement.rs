@@ -48,15 +48,35 @@ named!(pub parse_statement<ASTNode>, alt!(
 ));
 
 named!(pub parse_retstat<ASTNode>, map!(map!(
-        delimited!(tag!("return"), ws!(opt!(parse_explist)), opt!(tag!(";"))),
+        delimited!(
+            tag!("return"),
+            ws!(opt!(complete!(parse_explist))),
+            opt!(complete!(tag!(";")))
+        ),
         Box::new), ASTNode::RetStat));
 
 #[cfg(test)]
 mod tests {
-    ast_valid!(test_parse_semicolon, parse_semicolon, ";");
+    use ast::ASTNode::*;
 
-    ast_test!(test_parse_goto_1, parse_goto, "goto valid",
-              ASTNode::Goto(Box::new(ASTNode::Name("valid".into()))));
-    ast_panic_test!(test_parse_goto_2, parse_goto, "goto 17");
-    ast_panic_test!(test_parse_goto_3, parse_goto, "got 17");
+    ast_valid!(parse_semicolon, parse_semicolon, ";");
+
+    ast_test!(parse_goto_1, parse_goto, "goto valid",
+              astb!(Goto, ast!(Name, "valid".into())));
+    ast_panic_test!(parse_goto_2, parse_goto, "goto 17");
+    ast_panic_test!(parse_goto_3, parse_goto, "got 17");
+
+    ast_test!(parse_retstat_1, parse_retstat, "return false,true ;",
+              astb!(RetStat, Some(astb!(ExpList, vec![
+                ast!(Bool, false),
+                ast!(Bool, true)
+              ]))));
+
+    ast_test!(parse_retstat_2, parse_retstat, "return 1.0",
+              astb!(RetStat, Some(astb!(ExpList, vec![
+                ast!(Float, 1.0),
+              ]))));
+
+    ast_test!(parse_retstat_3, parse_retstat, "return",
+              astb!(RetStat, None));
 }
