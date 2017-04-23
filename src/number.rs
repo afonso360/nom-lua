@@ -21,7 +21,7 @@
 use std::str;
 use std::str::FromStr;
 use ast::ASTNode;
-use hexf_parse::parse_hexf64;
+//use hexf_parse::parse_hexf64;
 
 use super::nom::{digit, hex_digit};
 //TODO: LOCALE dependent decimal point!

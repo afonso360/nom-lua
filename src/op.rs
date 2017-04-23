@@ -25,9 +25,7 @@
 //mod logic_ops;
 //mod concat_ops;
 
-use nom::digit;
 use std::str;
-use std::str::FromStr;
 
 use ast::ASTNode;
 use super::exp::parse_exp;

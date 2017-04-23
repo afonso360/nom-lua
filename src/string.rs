@@ -19,7 +19,7 @@
  */
 
 use ast::ASTNode;
-use nom::{hex_digit, digit, sp, IResult};
+use nom::{hex_digit, digit};
 use std::str;
 use std_unicode;
 
