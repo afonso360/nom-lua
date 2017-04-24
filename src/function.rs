@@ -42,6 +42,14 @@ named!(parse_funcbody<ASTNode>, do_parse!(
         >> tag!("end")
         >> (astb!(FunctionBody, parlist, block))));
 
+// This is here because rustc complains about lack of type annotations
+named!(parse_multiname<Vec<ASTNode>>, many1!(preceded!(ws!(tag!(".")), parse_name)));
+named!(parse_funcname<ASTNode>, do_parse!(
+       n: map!(parse_name, Box::new)
+    >> m: opt!(map!(complete!(parse_multiname), Box::new))
+    >> f: opt!(map!(complete!(preceded!(ws!(tag!(":")), parse_name)), Box::new))
+    >> (ASTNode::FunctionName(n, m, f))
+));
 
 named!(parse_parlist<ASTNode>, do_parse!(
        nl: opt!(complete!(parse_namelist))
@@ -113,6 +121,31 @@ mod tests {
               astb!(FunctionBody,
                     Some(ast!(ParameterList, Box::new(None), false)),
                     astb!(Block, vec![ ast!(EmptyStatement) ], None))));
+
+    ast_test!(parse_funcname_1, parse_funcname, "a",
+              ast!(FunctionName, Box::new(ast!(Name, "a".into())), None, None));
+    ast_test!(parse_funcname_2, parse_funcname, "a.b",
+              ast!(FunctionName,
+                   Box::new(ast!(Name, "a".into())),
+                   Some(Box::new(vec![
+                                 ast!(Name, "b".into())
+                   ])),
+                   None));
+    ast_test!(parse_funcname_3, parse_funcname, "a. b . c",
+              ast!(FunctionName,
+                   Box::new(ast!(Name, "a".into())),
+                   Some(Box::new(vec![
+                                 ast!(Name, "b".into()),
+                                 ast!(Name, "c".into())
+                   ])),
+                   None));
+    ast_test!(parse_funcname_4, parse_funcname, "a.b:c",
+              ast!(FunctionName,
+                   Box::new(ast!(Name, "a".into())),
+                   Some(Box::new(vec![
+                                 ast!(Name, "b".into()),
+                   ])),
+                   Some(Box::new(ast!(Name, "c".into())))));
 }
 //		 function funcname funcbody |
 //		 local function Name funcbody |

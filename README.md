@@ -40,7 +40,7 @@ Lua 5.3 parser written with nom
 - [ ] prefixexp (needs to be finished)
 - [ ] functioncall (deps args, prefixexp)
 - [ ] args (deps explist, tableconstructor, LiteralString)
-- [ ] funcname
+- [x] funcname
 - [x] functiondef
 - [x] funcbody
 - [x] parlist

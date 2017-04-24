@@ -86,6 +86,13 @@ pub enum ASTNode {
     Function(Box<ASTNode>),
     /// Takes a ParameterList and a Block
     FunctionBody(Box<Option<ASTNode>>, Box<ASTNode>),
+    /// Has 3 parameters
+    /// the example: log.ms:al
+    /// would produce
+    /// Name log
+    /// Name ms
+    /// Name al
+    FunctionName(Box<ASTNode>, Option<Box<Vec<ASTNode>>>, Option<Box<ASTNode>>),
     /// Takes a Name and a FunctionBody
     NamedFunction(Box<ASTNode>, Box<ASTNode>),
 
@@ -181,6 +188,7 @@ impl Display for ASTNode {
             //Function
             Function(ref f) => write!(format, "{}", f),
             FunctionBody(ref parlist, ref fbody) => write!(format, "function ({:?}) {}", parlist, fbody),
+            FunctionName(ref n, ref m, ref f) => write!(format, "{}.{:?}:{:?}", n, m, f),
             NamedFunction(ref n, ref f) => write!(format, "(named {} {})", n, f),
 
             //TODO: Make this actually print thecontents
