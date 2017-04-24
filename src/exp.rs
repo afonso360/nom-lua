@@ -27,17 +27,18 @@ use op::parse_op;
 use string::parse_string;
 use function::parse_functiondef;
 use field::parse_fieldlist;
+use var::parse_var;
 
 named!(parse_vararg<ASTNode>, map!(tag!("..."), |_| ast!(VarArg)));
 named!(parse_nil<ASTNode>, map!(tag!("nil"), |_| ast!(Nil)));
 named!(parse_bool<ASTNode>, alt!(map!(tag!("false"), |_| ast!(Bool, false)) |
                                  map!(tag!("true"), |_| ast!(Bool, true))));
 
-named!(parse_prefixexp<ASTNode>, alt!(
-        //parse_var |
+named!(pub parse_prefixexp<ASTNode>, map!(map!(alt!(
         //parse_functioncall |
-        delimited!(tag!("("), ws!(parse_exp), tag!(")"))
-));
+        delimited!(tag!("("), ws!(parse_exp), tag!(")")) |
+        parse_var
+), Box::new), ASTNode::PrefixExp)) ;
 
 named!(pub parse_explist<ASTNode>, map!(map!(
             map!(do_parse!(

@@ -77,6 +77,12 @@ pub enum ASTNode {
     Concat(Box<ASTNode>, Box<ASTNode>),
 
     // Expression
+    /// Takes one of
+    /// Var
+    /// FunctionCall
+    /// Exp
+    PrefixExp(Box<ASTNode>),
+
     Nil,
     VarArg,
     TableConstructor(Box<Option<ASTNode>>),
@@ -112,6 +118,14 @@ pub enum ASTNode {
 
     // Local
     Local(Box<ASTNode>),
+
+    // Var
+    /// Takes a Name
+    Var(Box<ASTNode>),
+    /// Takes a prefixexp and a exp
+    VarPrefixed(Box<ASTNode>, Box<ASTNode>),
+    /// Takes a prefixexp and a Name
+    VarListAccess(Box<ASTNode>, Box<ASTNode>),
 }
 
 impl Display for ASTNode {
@@ -180,6 +194,8 @@ impl Display for ASTNode {
             Concat(ref left, ref right) => write!(format, "{} .. {}", left, right),
 
             // Exp
+            PrefixExp(ref e) => write!(format, "{}", e),
+
             Nil => write!(format, "nil"),
             VarArg => write!(format, "..."),
             //TODO: Remove this debug impl
@@ -204,6 +220,11 @@ impl Display for ASTNode {
 
             //Local
             Local(ref inner) => write!(format, "local {}", inner),
+
+            //Var
+            Var(ref name) => write!(format, "(var {})", name),
+            VarPrefixed(ref pe, ref e) => write!(format, "{}[{}]", pe, e),
+            VarListAccess(ref pe, ref n) => write!(format, "{}.{}", pe, n)
         }
     }
 }

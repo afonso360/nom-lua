@@ -24,7 +24,7 @@ Lua 5.3 parser written with nom
 - [x] retstat  (needs tests)
 - [x] label
 - [ ] varlist (deps var)
-- [ ] var (deps prefixexp, exp)
+- [x] var
 - [x] namelist (needs tests)
 - [x] explist (needs tests)
 - [x] exp (needs tests)
@@ -69,10 +69,12 @@ Lua 5.3 parser written with nom
 # TODO
 - [ ] Different integer and floating point values (i32, f32)
 - [ ] Better syntax errors
-- [ ] Fallback to floats on overflow
+- [x] Fallback to floats on overflow
 - [ ] Benchmarks
 - [ ] Fuzzing
 - [ ] Change tests to fail instead of panicking
+- [ ] Enforce ASTNodes correctness on more operations
+	For example, BinOp could take a BinOp enum instead of ASTNode
 
 
 ## License
