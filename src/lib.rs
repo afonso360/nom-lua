@@ -98,7 +98,7 @@ macro_rules! ast {
 
 use function::parse_block;
 use ast::ASTNode;
-named!(pub parse_chunk<ASTNode>, ws!(parse_block));
+use std::io::Read;
 
 pub mod ast;
 pub mod op;
@@ -112,3 +112,22 @@ pub mod statement;
 pub mod function;
 
 pub use nom::IResult;
+
+named!(pub parse_chunk<ASTNode>, ws!(parse_block));
+
+// TODO: Implement our own Error type
+pub fn parse_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<ASTNode> {
+    match parse_chunk(s.into()) {
+        IResult::Done(_, a) => Some(a),
+        _ => None
+    }
+}
+
+pub fn parse<T: Read>(mut s: T) -> Option<ASTNode> {
+    let mut buf = vec![];
+    s.read_to_end(&mut buf);
+    match parse_chunk(&buf) {
+        IResult::Done(_, a) => Some(a),
+        _ => None
+    }
+}
