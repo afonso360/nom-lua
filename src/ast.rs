@@ -107,6 +107,7 @@ pub enum ASTNode {
     VarList(Box<Vec<ASTNode>>),
     NameList(Box<Vec<ASTNode>>),
     FieldList(Box<Vec<ASTNode>>),
+    /// Takes a list of parameters and is vararg
     ParameterList(Box<Option<ASTNode>>, bool),
 
     // Field
@@ -148,7 +149,16 @@ impl Display for ASTNode {
             Paren(ref expr) => write!(format, "({})", expr),
 
             // Block
-            Block(ref statements, ref retstat) => write!(format, "(block)"),
+            Block(ref statements, ref retstat) => {
+                write!(format, "(block\n");
+                for e in statements.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                if let Some(ref ret_ast) = **retstat {
+                    write!(format, "\treturn {}\n", ret_ast);
+                }
+                write!(format, ")")
+            }
 
             // Statements
             EmptyStatement => write!(format, "(statement)"),
@@ -201,18 +211,51 @@ impl Display for ASTNode {
             //TODO: Remove this debug impl
             TableConstructor(ref fieldlist) => write!(format, "{{ {:?} }}", fieldlist),
 
-            //Function
+            // Function
             Function(ref f) => write!(format, "{}", f),
             FunctionBody(ref parlist, ref fbody) => write!(format, "function ({:?}) {}", parlist, fbody),
             FunctionName(ref n, ref m, ref f) => write!(format, "{}.{:?}:{:?}", n, m, f),
             NamedFunction(ref n, ref f) => write!(format, "(named {} {})", n, f),
 
-            //TODO: Make this actually print thecontents
-            ExpList(ref explist) => write!(format, "(explist)"),
-            VarList(ref varlist) => write!(format, "(varlist)"),
-            NameList(ref namelist) => write!(format, "(namelist)"),
-            ParameterList(ref plist, ref va) => write!(format, "(parameterlist, vararg: {})", va),
-            FieldList(ref namelist) => write!(format, "(fieldlist)"),
+            // Lists
+            ExpList(ref explist) => {
+                write!(format, "(explist\n");
+                for e in explist.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                write!(format, ")")
+            },
+            VarList(ref varlist) => {
+                write!(format, "(varlist\n");
+                for e in varlist.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                write!(format, ")")
+            },
+            NameList(ref namelist) => {
+                write!(format, "(namelist\n");
+                for e in namelist.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                write!(format, ")")
+            },
+            ParameterList(ref plist, ref va) => {
+                write!(format, "(paramlist\n");
+                for e in plist.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                if *va {
+                    write!(format, "\t...\n");
+                }
+                write!(format, ")")
+            },
+            FieldList(ref fieldlist) => {
+                write!(format, "(fieldlist\n");
+                for e in fieldlist.iter() {
+                    write!(format, "\t{}\n", e);
+                }
+                write!(format, ")")
+            },
 
             // Field
             FieldSingle(ref e) => write!(format, "(field {})", e),

@@ -113,7 +113,9 @@ pub mod function;
 
 pub use nom::IResult;
 
-named!(pub parse_chunk<ASTNode>, ws!(parse_block));
+//named!(pub parse_chunk<ASTNode>, ws!(parse_block));
+use exp::parse_exp;
+named!(pub parse_chunk<ASTNode>, dbg_dmp!(ws!(parse_exp)));
 
 // TODO: Implement our own Error type
 pub fn parse_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<ASTNode> {
@@ -126,6 +128,7 @@ pub fn parse_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<ASTNode> {
 pub fn parse<T: Read>(mut s: T) -> Option<ASTNode> {
     let mut buf = vec![];
     s.read_to_end(&mut buf);
+    buf.pop(); //Remove EOF
     match parse_chunk(&buf) {
         IResult::Done(_, a) => Some(a),
         _ => None
