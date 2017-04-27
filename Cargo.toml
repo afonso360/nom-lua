@@ -22,10 +22,13 @@ include = [
     "README.md",
 ]
 
+[features]
+graphviz = ["dot"]
 
 [dependencies]
 nom = "^2.2"
 hexf-parse = "0.1.0"
+dot = { version = "0.1.2", optional = true }
 
 [lib]
 crate-type = ["rlib", "dylib"]
