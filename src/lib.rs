@@ -97,7 +97,7 @@ macro_rules! ast {
 
 
 use function::parse_block;
-use ast::ASTNode;
+pub use ast::ASTNode;
 use std::io::Read;
 
 pub mod ast;
