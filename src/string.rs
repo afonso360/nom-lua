@@ -20,8 +20,7 @@
 
 use ast::ASTNode;
 use nom::{hex_digit, digit};
-use std::str;
-use std_unicode;
+use std::{str, char};
 
 named!(pub parse_string<ASTNode>,
        map!(alt!(/*parse_string_literal |*/ parse_string_short_literal), |s| ASTNode::String(s)));
@@ -103,16 +102,16 @@ named!(parse_unicode<char>,
                    delimited!(tag!("\\u{"), recognize!(hex_digit), tag!("}")),
                    str::from_utf8),
                    |h| u32::from_str_radix(h, 16)),
-                   std_unicode::char::from_u32));
+                   char::from_u32));
 
 #[cfg(test)]
 mod tests {
     ast_panic_test!(parse_unicode_1, parse_unicode, r#"\u{}"#);
-    ast_test!(parse_unicode_2, parse_unicode, r#"\u{A}"#, std_unicode::char::from_u32(0xA).unwrap());
-    ast_test!(parse_unicode_3, parse_unicode, r#"\u{a2}"#, std_unicode::char::from_u32(0xa2).unwrap());
-    ast_test!(parse_unicode_4, parse_unicode, r#"\u{AFf9}"#, std_unicode::char::from_u32(0xAFf9).unwrap());
-    ast_test!(parse_unicode_5, parse_unicode, r#"\u{0000000000000FFFF}"#, std_unicode::char::from_u32(0xFFFF).unwrap());
-    ast_test!(parse_unicode_6, parse_unicode, r#"\u{10FFFF}"#, std_unicode::char::from_u32(0x10FFFF).unwrap());
+    ast_test!(parse_unicode_2, parse_unicode, r#"\u{A}"#, char::from_u32(0xA).unwrap());
+    ast_test!(parse_unicode_3, parse_unicode, r#"\u{a2}"#, char::from_u32(0xa2).unwrap());
+    ast_test!(parse_unicode_4, parse_unicode, r#"\u{AFf9}"#, char::from_u32(0xAFf9).unwrap());
+    ast_test!(parse_unicode_5, parse_unicode, r#"\u{0000000000000FFFF}"#, char::from_u32(0xFFFF).unwrap());
+    ast_test!(parse_unicode_6, parse_unicode, r#"\u{10FFFF}"#, char::from_u32(0x10FFFF).unwrap());
     ast_panic_test!(parse_unicode_7, parse_unicode, r#"\u{110000}"#);
 
 

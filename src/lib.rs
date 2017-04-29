@@ -18,8 +18,6 @@
  * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#![feature(unicode)]
-
 //#![deny(missing_docs)]
 //#![deny(warnings)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
@@ -30,7 +28,8 @@ extern crate nom;
 #[macro_use]
 extern crate hexf_parse;
 
-extern crate std_unicode;
+#[cfg(feature="graphviz")]
+extern crate dot;
 
 // this is going to be usefull when looking at this crate
 // https://www.lua.org/manual/5.3/manual.html#9
