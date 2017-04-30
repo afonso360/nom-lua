@@ -5,24 +5,26 @@ for (int i = 0; i < names.size(); i++) {
 	def nodeName = names[i];
 	branches["node(" + nodeName + ")"] = {
 		node(nodeName) {
-			stage('Checkout') {
-				checkout scm;
-			}
-			stage('Version') {
-				sh 'rustc --version';
-				sh 'cargo --version';
-			}
-			stage('Build') {
-				sh 'cargo build --verbose';
-			}
-			stage('Test') {
-				sh 'cargo test --verbose';
-			}
-			stage('Bench') {
-				sh 'cargo bench --verbose';
-			}
-			stage('Doc') {
-				sh 'cargo doc --verbose';
+			withEnv(["CARGO_FLAGS=--features graphviz"]) {
+				stage('Checkout') {
+					checkout scm;
+				}
+				stage('Version') {
+					sh 'rustc --version';
+					sh 'cargo --version';
+				}
+				stage('Build') {
+					sh 'cargo build --verbose $CARGO_FLAGS';
+				}
+				stage('Test') {
+					sh 'cargo test --verbose $CARGO_FLAGS';
+				}
+				stage('Bench') {
+					sh 'cargo bench --verbose $CARGO_FLAGS';
+				}
+				stage('Doc') {
+					sh 'cargo doc --verbose $CARGO_FLAGS';
+				}
 			}
 		}
 	}
