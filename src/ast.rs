@@ -19,9 +19,9 @@
  */
 
 use std::fmt;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, PartialEq)]
 pub enum ASTNode {
     Integer(i64),
     Float(f64),
@@ -129,31 +129,7 @@ pub enum ASTNode {
     VarListAccess(Box<ASTNode>, Box<ASTNode>),
 }
 
-impl ASTNode {
-    fn get_name(&self) -> String {
-        use ASTNode::*;
-        match *self {
-            Integer(a) => format!("Integer_{}", a).to_owned(),
-            Float(a) => format!("Float_{}", a).to_owned(),
-            Bool(a) => format!("Bool_{}", a).to_owned(),
-            String(ref a) => format!("String_{}", a).to_owned(),
-            Label(ref a) => format!("Label_{}", a).to_owned(),
-            Name(ref a) => format!("Name_{}", a).to_owned(),
-            Paren(_) => "Paren".to_owned(),
-            Add(_, _) => "Add".to_owned(),
-            Sub(_, _) => "Sub".to_owned(),
-            Mul(_, _) => "Mul".to_owned(),
-            Div(_, _) => "Div".to_owned(),
-            Exp(_, _) => "Exp".to_owned(),
-            FDiv(_, _) => "FDiv".to_owned(),
-            Mod(_, _) => "Mod".to_owned(),
-            PrefixExp(_) => "PrefixExp".to_owned(),
-            _ => unimplemented!(),
-        }
-    }
-}
-
-impl Display for ASTNode {
+impl Debug for ASTNode {
     fn fmt(&self, format: &mut Formatter) -> fmt::Result {
         use self::ASTNode::*;
         match *self {
@@ -294,14 +270,91 @@ impl Display for ASTNode {
             VarListAccess(ref pe, ref n) => write!(format, "{}.{}", pe, n)
         }
     }
+
 }
 
+impl Display for ASTNode {
+    fn fmt(&self, format: &mut Formatter) -> fmt::Result {
+        use ASTNode::*;
+        match *self {
+            //TODO: Check if the DOT format supports ()
+            Integer(a) => write!(format, "Integer_{}_", a),
+            Float(a) => write!(format, "Float_{}_", a),
+            Bool(a) => write!(format, "Bool_{}_", a),
+            // Dot does not allow spaces and a bunch of things in the names
+            // we should change some of this stuff
+            String(ref a) => write!(format, "String_{}_", a),
+            Label(ref a) => write!(format, "Label_{}_", a),
+            Name(ref a) => write!(format, "Name_{}_", a),
+            Paren(_) => write!(format, "Paren"),
+            Block(_, _) => write!(format, "Block"),
+            EmptyStatement => write!(format, "EmptyStatement"),
+            Break => write!(format, "Break"),
+            Goto(_) => write!(format, "Goto"),
+            RetStat(_) => write!(format, "RetStat"),
+            Add(_, _) => write!(format, "Add"),
+            Sub(_, _) => write!(format, "Sub"),
+            Mul(_, _) => write!(format, "Mul"),
+            Div(_, _) => write!(format, "Div"),
+            Exp(_, _) => write!(format, "Exp"),
+            FDiv(_, _) => write!(format, "FDiv"),
+            Mod(_, _) => write!(format, "Mod"),
+            And(_, _) => write!(format, "And"),
+            Or(_, _) => write!(format, "Or"),
+            Lt(_, _) => write!(format, "Lt"),
+            Le(_, _) => write!(format, "Le"),
+            Gt(_, _) => write!(format, "Gt"),
+            Ge(_, _) => write!(format, "Ge"),
+            Eq(_, _) => write!(format, "Eq"),
+            Ne(_, _) => write!(format, "Ne"),
+            BitOr(_, _) => write!(format, "BitOr"),
+            BitAnd(_, _) => write!(format, "BitAnd"),
+            BitXor(_, _) => write!(format, "BitXor"),
+            Rsh(_, _) => write!(format, "Rsh"),
+            Lsh(_, _) => write!(format, "Lsh"),
+            BinNot(_) => write!(format, "BinNot"),
+            Not(_) => write!(format, "Not"),
+            Len(_) => write!(format, "Len"),
+            UMin(_) => write!(format, "UMin"),
+            Concat(_, _) => write!(format, "Concat"),
+            PrefixExp(_) => write!(format, "PrefixExp"),
+            Nil => write!(format, "Nil"),
+            VarArg => write!(format, "VarArg"),
+            TableConstructor(_) => write!(format, "TableConstructor"),
+            Function(_) => write!(format, "Function"),
+            FunctionBody(_, _) => write!(format, "FunctionBody"),
+            FunctionName(_, _, _) => write!(format, "FunctionName"),
+            NamedFunction(_, _) => write!(format, "NamedFunction"),
+            ExpList(_) => write!(format, "ExpList"),
+            VarList(_) => write!(format, "VarList"),
+            NameList(_) => write!(format, "NameList"),
+            FieldList(_) => write!(format, "FieldList"),
+            ParameterList(_, _) => write!(format, "ParameterList"),
+            FieldSingle(_) => write!(format, "FieldSingle"),
+            FieldAssign(_, _) => write!(format, "FieldAssign"),
+            Local(_) => write!(format, "Local"),
+            Var(_) => write!(format, "Var"),
+            VarPrefixed(_, _) => write!(format, "VarPrefixed"),
+            VarListAccess(_, _) => write!(format, "VarListAccess"),
+        }
+    }
+}
+
+//TODO: There is a bunch of cloing here that might not be necessary
+//TODO: Is there a better way to do this, or do we need 6 cfg blocks
 #[cfg(feature="graphviz")]
 type Node = ASTNode;
 #[cfg(feature="graphviz")]
 type Edge = (ASTNode, ASTNode);
 #[cfg(feature="graphviz")]
 struct Edges(Vec<Edge>);
+#[cfg(feature="graphviz")]
+use dot;
+#[cfg(feature="graphviz")]
+use std::borrow::Cow;
+#[cfg(feature="graphviz")]
+use std::io::Write;
+
 
 #[cfg(feature="graphviz")]
 impl<'a> dot::Labeller<'a, Node, Edge> for Edges {
@@ -310,8 +363,7 @@ impl<'a> dot::Labeller<'a, Node, Edge> for Edges {
     }
 
     fn node_id(&'a self, node: &Node) -> dot::Id<'a> {
-        let name = node.get_name();
-        dot::Id::new(name).unwrap()
+        dot::Id::new(format!("{}", node)).unwrap()
     }
 }
 
@@ -341,13 +393,6 @@ impl<'a> dot::GraphWalk<'a, Node, Edge> for Edges {
     fn target(&self, e: &Edge) -> Node { let &(_,ref t) = e; t.clone() }
 }
 
-#[cfg(feature="graphviz")]
-use dot;
-#[cfg(feature="graphviz")]
-use std::borrow::Cow;
-#[cfg(feature="graphviz")]
-use std::io::Write;
-
 
 #[cfg(feature="graphviz")]
 impl ASTNode {
@@ -355,64 +400,115 @@ impl ASTNode {
         use ASTNode::*;
         let mut node_vec = Vec::new();
         match (*self).clone() {
-            // When we have a full implementation we can move this onto _ => {}
-            Integer(_) => {},
-            Float(_) => {},
-            Bool(_) => {},
-            String(_) => {},
-            Label(_) => {},
-            Name(_) => {},
 
-            Paren(a) => node_vec.push(((*self).clone(), (*a).clone())),
+            Integer(_) |
+            Float(_) |
+            Bool(_) |
+            String(_) |
+            Label(_) |
+            Name(_) |
+            Nil |
+            Break |
+            VarArg |
+            EmptyStatement => {},
 
-            // ArithmeticOps
-            Add(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            Sub(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            Mul(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            Div(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            Exp(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            FDiv(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
-            Mod(a, b) => {
-                node_vec.push(((*self).clone(), (*a).clone()));
-                node_vec.push(((*self).clone(), (*b).clone()));
-                node_vec.extend(a.generate_edges());
-                node_vec.extend(b.generate_edges());
-            },
+            Paren(a) |
+            Local(a) |
+            Var(a) |
+            Goto(a) |
+            BinNot(a) |
+            Not(a) |
+            Len(a) |
+            UMin(a) |
+            PrefixExp(a) |
+            Function(a) |
+            FieldSingle(a) |
             PrefixExp(a) => {
                 node_vec.push(((*self).clone(), (*a).clone()));
                 node_vec.extend(a.generate_edges());
             },
-            _ => panic!("Unimplemented: GenEdges: {:?}", (*self).clone()),
+
+            Add(a, b) |
+            Sub(a, b) |
+            Mul(a, b) |
+            Div(a, b) |
+            Exp(a, b) |
+            FDiv(a, b) |
+            Mod(a, b) |
+            And(a, b) |
+            Or(a, b) |
+            Lt(a, b) |
+            Le(a, b) |
+            Gt(a, b) |
+            Ge(a, b) |
+            Eq(a, b) |
+            Ne(a, b) |
+            BitOr(a, b) |
+            BitAnd(a, b) |
+            BitXor(a, b) |
+            Rsh(a, b) |
+            Lsh(a, b) |
+            Concat(a, b) |
+            FieldAssign(a, b) |
+            VarPrefixed(a, b) |
+            VarListAccess(a, b) |
+            NamedFunction(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+
+            RetStat(a) |
+            TableConstructor(a) |
+            ParameterList(a, _) => if let Some(sa) = *a {
+                node_vec.push(((*self).clone(), sa.clone()));
+                node_vec.extend(sa.generate_edges());
+            },
+
+            ExpList(a) |
+            VarList(a) |
+            NameList(a) |
+            FieldList(a) => {
+                a.iter().map(|ae| {
+                    node_vec.push(((*self).clone(), (*ae).clone()));
+                    node_vec.extend(ae.generate_edges());
+                });
+            },
+
+            Block(a, b) => {
+                a.iter().map(|ae| {
+                    node_vec.push(((*self).clone(), (*ae).clone()));
+                    node_vec.extend(ae.generate_edges());
+                });
+                if let Some(sb) = *b {
+                    node_vec.push(((*self).clone(), sb.clone()));
+                    node_vec.extend(sb.generate_edges());
+                };
+            },
+            FunctionBody(a, b) => {
+                if let Some(sa) = *a {
+                    node_vec.push(((*self).clone(), sa.clone()));
+                    node_vec.extend(sa.generate_edges());
+                };
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(b.generate_edges());
+            },
+            FunctionName(a, b, c) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.extend(a.generate_edges());
+                if let Some(sb) = b {
+                    sb.iter().map(|sbe| {
+                        node_vec.push(((*self).clone(), (*sbe).clone()));
+                        node_vec.extend(sbe.generate_edges());
+                    });
+                };
+                if let Some(sc) = c {
+                    node_vec.push(((*self).clone(), (*sc).clone()));
+                    node_vec.extend(sc.generate_edges());
+                };
+            },
+            _ => panic!("Unimplemented: GenEdges"),
         }
         node_vec
     }
@@ -420,58 +516,96 @@ impl ASTNode {
     fn sub_nodes(&self) -> Vec<ASTNode> {
         use ASTNode::*;
         let mut node_vec = Vec::new();
+
+        node_vec.push((*self).clone());
+
         match (*self).clone() {
-            Integer(_) => node_vec.push((*self).clone()),
-            Float(_) => node_vec.push((*self).clone()),
-            Bool(_) => node_vec.push((*self).clone()),
-            String(_) => node_vec.push((*self).clone()),
-            Label(_) => node_vec.push((*self).clone()),
-            Name(_) => node_vec.push((*self).clone()),
+            Nil |
+            VarArg |
+            Break |
+            EmptyStatement |
+            Float(_) |
+            Bool(_) |
+            String(_) |
+            Label(_) |
+            Name(_) |
+            Integer(_) => {},
 
-            Paren(a) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-            },
+            Goto(a) |
+            BinNot(a) |
+            Not(a) |
+            Len(a) |
+            UMin(a) |
+            PrefixExp(a) |
+            FieldSingle(a) |
+            Local(a) |
+            Var(a) |
+            Function(a) |
+            PrefixExp(a) |
+            Paren(a) => node_vec.extend(a.sub_nodes()),
 
-            // ArithmeticOps
-            Add(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
-            Sub(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
-            Mul(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
-            Div(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
-            Exp(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
-            FDiv(a, b) => {
-                node_vec.push((*self).clone());
-                node_vec.extend(a.sub_nodes());
-                node_vec.extend(b.sub_nodes());
-            },
+            And(a, b) |
+            Or(a, b) |
+            Lt(a, b) |
+            Le(a, b) |
+            Gt(a, b) |
+            Ge(a, b) |
+            Eq(a, b) |
+            Ne(a, b) |
+            BitOr(a, b) |
+            BitAnd(a, b) |
+            BitXor(a, b) |
+            Rsh(a, b) |
+            Lsh(a, b) |
+            FieldAssign(a, b) |
+            VarPrefixed(a, b) |
+            VarListAccess(a, b) |
+            NamedFunction(a, b) |
+            Concat(a, b) |
+            Add(a, b) |
+            Sub(a, b) |
+            Mul(a, b) |
+            Div(a, b) |
+            Exp(a, b) |
+            FDiv(a, b) |
             Mod(a, b) => {
-                node_vec.push((*self).clone());
                 node_vec.extend(a.sub_nodes());
                 node_vec.extend(b.sub_nodes());
             },
-            PrefixExp(a) => {
-                node_vec.push((*self).clone());
+
+            ExpList(a) |
+            VarList(a) |
+            NameList(a) |
+            FieldList(a) => { a.iter().map(|b| node_vec.extend(b.sub_nodes())); },
+
+            RetStat(a) |
+            ParameterList(a, _) |
+            TableConstructor(a) => if let Some(sa) = *a {
+                node_vec.extend(sa.sub_nodes());
+            },
+
+            Block(a, b) => {
+                a.iter().map(|ae| node_vec.extend(ae.sub_nodes()));
+                if let Some(sb) = *b {
+                    node_vec.extend(sb.sub_nodes());
+                }
+            },
+
+            FunctionBody(a, b) => {
+                if let Some(sa) = *a {
+                    node_vec.extend(sa.sub_nodes());
+                }
+                node_vec.extend(b.sub_nodes());
+            },
+
+            FunctionName(a, b, c) => {
                 node_vec.extend(a.sub_nodes());
+                if let Some(sb) = b {
+                    sb.iter().map(|sbe| node_vec.extend(sbe.sub_nodes()));
+                };
+                if let Some(sc) = c {
+                    node_vec.extend(sc.sub_nodes());
+                }
             },
             _ => panic!("Unimplemented: SubNodes"),
         };
