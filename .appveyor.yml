@@ -22,4 +22,8 @@ build_script:
 test_script:
     - cargo test --verbose %cargoflags%
 
-    - IF %channel%==nightly cargo bench --verbose %cargoflags%
+    - IF %channel%==nightly C:\msys64\usr\bin\bash -lc "CARGOFLAGS=%cargoflags% curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | sh"
+
+branches:
+  except:
+    - benches

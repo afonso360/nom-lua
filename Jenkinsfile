@@ -20,7 +20,7 @@ for (int i = 0; i < names.size(); i++) {
 					sh 'cargo test --verbose $CARGO_FLAGS';
 				}
 				stage('Bench') {
-					sh 'cargo bench --verbose $CARGO_FLAGS';
+					sh 'curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | sh';
 				}
 				stage('Doc') {
 					sh 'cargo doc --verbose $CARGO_FLAGS';
