@@ -21,7 +21,7 @@
 use std::fmt;
 use std::fmt::{Display, Formatter};
 
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ASTNode {
     Integer(i64),
     Float(f64),
@@ -127,6 +127,30 @@ pub enum ASTNode {
     VarPrefixed(Box<ASTNode>, Box<ASTNode>),
     /// Takes a prefixexp and a Name
     VarListAccess(Box<ASTNode>, Box<ASTNode>),
+}
+
+impl ASTNode {
+    fn get_name(&self) -> String {
+        use ASTNode::*;
+        match *self {
+            Integer(a) => format!("Integer_{}", a).to_owned(),
+            Float(a) => format!("Float_{}", a).to_owned(),
+            Bool(a) => format!("Bool_{}", a).to_owned(),
+            String(ref a) => format!("String_{}", a).to_owned(),
+            Label(ref a) => format!("Label_{}", a).to_owned(),
+            Name(ref a) => format!("Name_{}", a).to_owned(),
+            Paren(_) => "Paren".to_owned(),
+            Add(_, _) => "Add".to_owned(),
+            Sub(_, _) => "Sub".to_owned(),
+            Mul(_, _) => "Mul".to_owned(),
+            Div(_, _) => "Div".to_owned(),
+            Exp(_, _) => "Exp".to_owned(),
+            FDiv(_, _) => "FDiv".to_owned(),
+            Mod(_, _) => "Mod".to_owned(),
+            PrefixExp(_) => "PrefixExp".to_owned(),
+            _ => unimplemented!(),
+        }
+    }
 }
 
 impl Display for ASTNode {
@@ -269,5 +293,194 @@ impl Display for ASTNode {
             VarPrefixed(ref pe, ref e) => write!(format, "{}[{}]", pe, e),
             VarListAccess(ref pe, ref n) => write!(format, "{}.{}", pe, n)
         }
+    }
+}
+
+#[cfg(feature="graphviz")]
+type Node = ASTNode;
+#[cfg(feature="graphviz")]
+type Edge = (ASTNode, ASTNode);
+#[cfg(feature="graphviz")]
+struct Edges(Vec<Edge>);
+
+#[cfg(feature="graphviz")]
+impl<'a> dot::Labeller<'a, Node, Edge> for Edges {
+    fn graph_id(&'a self) -> dot::Id<'a> {
+        dot::Id::new("AST").unwrap()
+    }
+
+    fn node_id(&'a self, node: &Node) -> dot::Id<'a> {
+        let name = node.get_name();
+        dot::Id::new(name).unwrap()
+    }
+}
+
+
+#[cfg(feature="graphviz")]
+impl<'a> dot::GraphWalk<'a, Node, Edge> for Edges {
+    fn nodes(&self) -> dot::Nodes<'a,Node> {
+        // (assumes that |N| \approxeq |E|)
+        let &Edges(ref v) = self;
+        let mut node_vec = Vec::with_capacity(v.len());
+        for n in v {
+            let &(ref s, ref t) = n;
+            node_vec.extend(s.sub_nodes());
+            node_vec.extend(t.sub_nodes());
+        }
+        node_vec.dedup();
+        Cow::Owned(node_vec)
+    }
+
+    fn edges(&'a self) -> dot::Edges<'a,Edge> {
+        let &Edges(ref edges) = self;
+        Cow::Borrowed(&edges[..])
+    }
+
+    fn source(&self, e: &Edge) -> Node { let &(ref s,_) = e; s.clone() }
+
+    fn target(&self, e: &Edge) -> Node { let &(_,ref t) = e; t.clone() }
+}
+
+#[cfg(feature="graphviz")]
+use dot;
+#[cfg(feature="graphviz")]
+use std::borrow::Cow;
+#[cfg(feature="graphviz")]
+use std::io::Write;
+
+
+#[cfg(feature="graphviz")]
+impl ASTNode {
+    fn generate_edges(&self) -> Vec<(ASTNode, ASTNode)> {
+        use ASTNode::*;
+        let mut node_vec = Vec::new();
+        match (*self).clone() {
+            // When we have a full implementation we can move this onto _ => {}
+            Integer(_) => {},
+            Float(_) => {},
+            Bool(_) => {},
+            String(_) => {},
+            Label(_) => {},
+            Name(_) => {},
+
+            Paren(a) => node_vec.push(((*self).clone(), (*a).clone())),
+
+            // ArithmeticOps
+            Add(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            Sub(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            Mul(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            Div(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            Exp(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            FDiv(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            Mod(a, b) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.push(((*self).clone(), (*b).clone()));
+                node_vec.extend(a.generate_edges());
+                node_vec.extend(b.generate_edges());
+            },
+            PrefixExp(a) => {
+                node_vec.push(((*self).clone(), (*a).clone()));
+                node_vec.extend(a.generate_edges());
+            },
+            _ => panic!("Unimplemented: GenEdges: {:?}", (*self).clone()),
+        }
+        node_vec
+    }
+
+    fn sub_nodes(&self) -> Vec<ASTNode> {
+        use ASTNode::*;
+        let mut node_vec = Vec::new();
+        match (*self).clone() {
+            Integer(_) => node_vec.push((*self).clone()),
+            Float(_) => node_vec.push((*self).clone()),
+            Bool(_) => node_vec.push((*self).clone()),
+            String(_) => node_vec.push((*self).clone()),
+            Label(_) => node_vec.push((*self).clone()),
+            Name(_) => node_vec.push((*self).clone()),
+
+            Paren(a) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+            },
+
+            // ArithmeticOps
+            Add(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            Sub(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            Mul(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            Div(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            Exp(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            FDiv(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            Mod(a, b) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+                node_vec.extend(b.sub_nodes());
+            },
+            PrefixExp(a) => {
+                node_vec.push((*self).clone());
+                node_vec.extend(a.sub_nodes());
+            },
+            _ => panic!("Unimplemented: SubNodes"),
+        };
+        node_vec
+    }
+
+    #[cfg(feature="graphviz")]
+    pub fn graphviz_render<W: Write>(&self, output: &mut W) {
+        let edges = Edges(self.generate_edges());
+        dot::render(&edges, output).unwrap()
     }
 }
