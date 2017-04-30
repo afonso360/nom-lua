@@ -15,7 +15,7 @@ addons:
       - cmake
 
 env:
-  - CARGO_FLAGS="--features dot"
+  - CARGO_FLAGS="--features graphviz"
 
 rust:
   - beta
