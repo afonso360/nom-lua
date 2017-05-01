@@ -24,8 +24,10 @@ build_script:
 test_script:
     - cargo test --verbose %cargoflags%
 
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy pacman"
+    - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"
     - IF "%channel%" == "nightly" (
-        IF DEFINED APPVEYOR_PULL_REQUEST_NUMBER (
-          C:\msys64\usr\bin\bash -vlc "CARGOFLAGS=\"%cargoflags%\" curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | sh"
+        IF NOT DEFINED APPVEYOR_PULL_REQUEST_NUMBER (
+          C:\msys64\usr\bin\bash -vlc "cd /c/projects/nom-lua && curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | CARGOFLAGS=\"%cargoflags%\" /bin/bash"
         )
       )
