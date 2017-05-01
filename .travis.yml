@@ -35,9 +35,9 @@ before_script:
   - which rustfmt || cargo install rustfmt
 
 script:
-  - cargo build --verbose $CARGO_FLAGS
-  - cargo test --verbose $CARGO_FLAGS
-  - cargo doc --verbose $CARGO_FLAGS
+  - cargo build --verbose ${CARGO_FLAGS}
+  - cargo test --verbose ${CARGO_FLAGS}
+  - cargo doc --verbose ${CARGO_FLAGS}
   - if [ "$TRAVIS_RUST_VERSION" == "nightly" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
       curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | sh ;
     fi
@@ -45,7 +45,7 @@ script:
 after_success:
   - cargo fmt -- --write-mode=diff
   - if [ "$TRAVIS_OS_NAME" == "linux" ] && [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
-        cargo coveralls $CARGO_FLAGS;
+        cargo coveralls ${CARGO_FLAGS};
     fi
 
 env:
