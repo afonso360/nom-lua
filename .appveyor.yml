@@ -1,6 +1,9 @@
 os: Visual Studio 2017
 
+
 environment:
+  GH_TOKEN:
+    secure: /u/eFQR83P03KKHQA3uBuZuR3ya/GcBWdztd7sqmKJllcn588RrmE0GNfDhqBYIN
   global:
     cargoflags: --features "graphviz"
   matrix:
@@ -27,7 +30,3 @@ test_script:
 branches:
   except:
     - benches
-
-environment:
-  GH_TOKEN:
-    secure: /u/eFQR83P03KKHQA3uBuZuR3ya/GcBWdztd7sqmKJllcn588RrmE0GNfDhqBYIN
