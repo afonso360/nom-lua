@@ -110,8 +110,8 @@ test result: ok. 0 passed; 0 failed; 105 ignored; 0 measured
 
 
 running 3 tests
-test parse_float   ... bench:       1,615 ns/iter (+/- 1,015)
-test parse_hex_int ... bench:       1,447 ns/iter (+/- 1,570)
-test parse_int     ... bench:       1,717 ns/iter (+/- 1,338)
+test parse_float   ... bench:       1,679 ns/iter (+/- 435)
+test parse_hex_int ... bench:       1,520 ns/iter (+/- 899)
+test parse_int     ... bench:       1,818 ns/iter (+/- 408)
 
 test result: ok. 0 passed; 0 failed; 0 ignored; 3 measured
