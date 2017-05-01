@@ -3,7 +3,7 @@ os: Visual Studio 2017
 
 environment:
   GH_TOKEN:
-    secure: /u/eFQR83P03KKHQA3uBuZuR3ya/GcBWdztd7sqmKJllcn588RrmE0GNfDhqBYIN
+    secure: ClE5Q0vkEMp9dHtDOgQcRGkek5Ppg1s/LyX7xKU09N15wQds8DoGgJDIWny5omOK
   global:
     cargoflags: --features "graphviz"
   matrix:
