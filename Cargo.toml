@@ -33,3 +33,7 @@ dot = { version = "0.1.2", optional = true }
 [lib]
 crate-type = ["rlib", "dylib"]
 name = "nom_lua"
+
+[[example]]
+name = "graphviz"
+required-features = ["graphviz"]
