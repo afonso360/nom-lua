@@ -1,0 +1,117 @@
+
+running 105 tests
+test exp::tests::parse_bool_f ... ignored
+test exp::tests::parse_bool_t ... ignored
+test exp::tests::parse_explist_1 ... ignored
+test exp::tests::parse_explist_2 ... ignored
+test exp::tests::parse_explist_3 ... ignored
+test exp::tests::parse_nil ... ignored
+test exp::tests::parse_vararg ... ignored
+test field::tests::parse_field_assign_1 ... ignored
+test field::tests::parse_field_assign_2 ... ignored
+test field::tests::parse_field_assign_3 ... ignored
+test field::tests::parse_field_single_1 ... ignored
+test field::tests::parse_fieldsep_1 ... ignored
+test field::tests::parse_fieldsep_2 ... ignored
+test function::tests::parse_block_1 ... ignored
+test function::tests::parse_block_2 ... ignored
+test function::tests::parse_block_3 ... ignored
+test function::tests::parse_funcbody_1 ... ignored
+test function::tests::parse_funcname_1 ... ignored
+test function::tests::parse_funcname_2 ... ignored
+test function::tests::parse_funcname_3 ... ignored
+test function::tests::parse_funcname_4 ... ignored
+test function::tests::parse_functiondef_1 ... ignored
+test function::tests::parse_local_function_1 ... ignored
+test function::tests::parse_parlist_1 ... ignored
+test function::tests::parse_parlist_2 ... ignored
+test function::tests::parse_parlist_3 ... ignored
+test function::tests::parse_parlist_5 ... ignored
+test name::tests::parse_label_1 ... ignored
+test name::tests::parse_label_2 ... ignored
+test name::tests::parse_namelist_1 ... ignored
+test name::tests::parse_namelist_2 ... ignored
+test name::tests::parse_namelist_3 ... ignored
+test name::tests::parse_namelist_4 ... ignored
+test name::tests::parse_valid_name_1 ... ignored
+test name::tests::parse_valid_name_2 ... ignored
+test name::tests::parse_valid_name_3 ... ignored
+test name::tests::parse_valid_name_4 ... ignored
+test number::tests::parse_float_1 ... ignored
+test number::tests::parse_float_10 ... ignored
+test number::tests::parse_float_11 ... ignored
+test number::tests::parse_float_12 ... ignored
+test number::tests::parse_float_13 ... ignored
+test number::tests::parse_float_14 ... ignored
+test number::tests::parse_float_2 ... ignored
+test number::tests::parse_float_3 ... ignored
+test number::tests::parse_float_4 ... ignored
+test number::tests::parse_float_5 ... ignored
+test number::tests::parse_float_6 ... ignored
+test number::tests::parse_float_7 ... ignored
+test number::tests::parse_float_8 ... ignored
+test number::tests::parse_float_9 ... ignored
+test number::tests::parse_hex_1 ... ignored
+test number::tests::parse_hex_2 ... ignored
+test number::tests::parse_hex_3 ... ignored
+test number::tests::parse_hex_4 ... ignored
+test number::tests::parse_hex_5 ... ignored
+test number::tests::parse_hex_6 ... ignored
+test number::tests::parse_hex_7 ... ignored
+test number::tests::parse_hex_8 ... ignored
+test number::tests::parse_int_1 ... ignored
+test number::tests::parse_int_3 ... ignored
+test number::tests::parse_int_4 ... ignored
+test number::tests::parse_int_5 ... ignored
+test number::tests::parse_number_1 ... ignored
+test number::tests::parse_number_2 ... ignored
+test number::tests::parse_number_3 ... ignored
+test number::tests::parse_number_4 ... ignored
+test statement::tests::parse_goto_1 ... ignored
+test statement::tests::parse_goto_2 ... ignored
+test statement::tests::parse_goto_3 ... ignored
+test statement::tests::parse_retstat_1 ... ignored
+test statement::tests::parse_retstat_2 ... ignored
+test statement::tests::parse_retstat_3 ... ignored
+test statement::tests::parse_semicolon ... ignored
+test string::tests::parse_byte_d_1 ... ignored
+test string::tests::parse_byte_d_2 ... ignored
+test string::tests::parse_byte_d_3 ... ignored
+test string::tests::parse_byte_d_4 ... ignored
+test string::tests::parse_byte_d_5 ... ignored
+test string::tests::parse_byte_d_6 ... ignored
+test string::tests::parse_byte_x_1 ... ignored
+test string::tests::parse_byte_x_3 ... ignored
+test string::tests::parse_byte_x_4 ... ignored
+test string::tests::parse_byte_x_5 ... ignored
+test string::tests::parse_string_short_literal_1 ... ignored
+test string::tests::parse_string_short_literal_2 ... ignored
+test string::tests::parse_string_short_literal_3 ... ignored
+test string::tests::parse_string_short_literal_4 ... ignored
+test string::tests::parse_string_short_literal_5 ... ignored
+test string::tests::parse_string_short_literal_6 ... ignored
+test string::tests::parse_string_short_literal_7 ... ignored
+test string::tests::parse_string_short_literal_8 ... ignored
+test string::tests::parse_unicode_1 ... ignored
+test string::tests::parse_unicode_2 ... ignored
+test string::tests::parse_unicode_3 ... ignored
+test string::tests::parse_unicode_4 ... ignored
+test string::tests::parse_unicode_5 ... ignored
+test string::tests::parse_unicode_6 ... ignored
+test string::tests::parse_unicode_7 ... ignored
+test var::tests::parse_var_1 ... ignored
+test var::tests::parse_var_2 ... ignored
+test var::tests::parse_var_3 ... ignored
+test var::tests::parse_varlist_1 ... ignored
+test var::tests::parse_varlist_2 ... ignored
+test var::tests::parse_varlist_3 ... ignored
+
+test result: ok. 0 passed; 0 failed; 105 ignored; 0 measured
+
+
+running 3 tests
+test parse_float   ... bench:       1,609 ns/iter (+/- 71)
+test parse_hex_int ... bench:       1,187 ns/iter (+/- 51)
+test parse_int     ... bench:       1,601 ns/iter (+/- 38)
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 3 measured
