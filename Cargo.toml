@@ -25,6 +25,10 @@ include = [
 [features]
 graphviz = ["dot"]
 
+[badges]
+travis-ci = { repository = "afonso360/nom-lua" }
+appveyor = { repository = "afonso360/nom-lua" }
+
 [dependencies]
 nom = "^2.2"
 hexf-parse = "0.1.0"
