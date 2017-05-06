@@ -37,10 +37,8 @@ before_script:
 script:
   - cargo build --verbose ${CARGO_FLAGS}
   - cargo test --verbose ${CARGO_FLAGS}
+  - cargo bench --verbose ${CARGO_FLAGS}
   - cargo doc --verbose ${CARGO_FLAGS}
-  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
-      curl https://raw.githubusercontent.com/afonso360/rust-benchstats/master/benchstats.sh -sSf | sh ;
-    fi
 
 after_success:
   - cargo fmt -- --write-mode=diff
