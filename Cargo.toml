@@ -5,7 +5,7 @@ name = "nom-lua"
 readme = "README.md"
 version = "0.0.2"
 repository = "https://github.com/afonso360/nom-lua"
-documentation = "https://docs.rs/nom-lua/0.0.1/nom-lua"
+documentation = "https://docs.rs/nom-lua/0.0.2/nom-lua"
 homepage = "https://github.com/afonso360/nom-lua"
 description = """
 Lua 5.3 parser written in nom
