@@ -34,7 +34,7 @@ fn parse_hex_int(b: &mut Bencher) {
                         .collect());
 
     b.iter(|| {
-        for i in ints.iter() {
+        for i in &ints {
             number::parse_number(i.as_bytes());
         }
     });
@@ -48,7 +48,7 @@ fn parse_int(b: &mut Bencher) {
                         .collect());
 
     b.iter(|| {
-        for i in ints.iter() {
+        for i in &ints {
             number::parse_number(i.as_bytes());
         }
     });
@@ -62,7 +62,7 @@ fn parse_float(b: &mut Bencher) {
                         .collect());
 
     b.iter(|| {
-        for i in ints.iter() {
+        for i in &ints {
             number::parse_number(i.as_bytes());
         }
     });
