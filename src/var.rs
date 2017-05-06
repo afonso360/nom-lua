@@ -51,7 +51,7 @@ named!(pub parse_var<ASTNode>, alt!(
                 }
             }
 
-            return astb!(Var, name);
+            astb!(Var, name)
         }
     ) |
     do_parse!(

@@ -44,7 +44,7 @@ named!(pub parse_explist<ASTNode>, map!(
             map!(do_parse!(
                    a: parse_exp
                 >> b: many0!(preceded!(ws!(tag!(",")), parse_exp))
-                >> ((a,b))
+                >> (a,b)
             ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
 ASTNode::ExpList));
 

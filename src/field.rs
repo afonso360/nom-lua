@@ -29,7 +29,7 @@ named!(pub parse_fieldlist<ASTNode>, map!(
             map!(do_parse!(
                    a: parse_field
                 >> b: many0!(preceded!(parse_fieldsep, parse_field))
-                >> ((a,b))
+                >> (a,b)
             ), |(a, mut b): (_, Vec <ASTNode>) | { b.insert(0, a); b }),
 ASTNode::FieldList));
 
