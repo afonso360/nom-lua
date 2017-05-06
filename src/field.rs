@@ -25,13 +25,13 @@ use ast::ASTNode::*;
 use exp::parse_exp;
 use name::parse_name;
 
-named!(pub parse_fieldlist<ASTNode>, map!(map!(
+named!(pub parse_fieldlist<ASTNode>, map!(
             map!(do_parse!(
                    a: parse_field
                 >> b: many0!(preceded!(parse_fieldsep, parse_field))
                 >> ((a,b))
             ), |(a, mut b): (_, Vec <ASTNode>) | { b.insert(0, a); b }),
-Box::new), ASTNode::FieldList));
+ASTNode::FieldList));
 
 named!(parse_field<ASTNode>, ws!(alt!(
         do_parse!(

@@ -31,7 +31,7 @@ pub enum ASTNode {
     Name(String),
     Paren(Box<ASTNode>),
 
-    Block(Box<Vec<ASTNode>>, Box<Option<ASTNode>>),
+    Block(Vec<ASTNode>, Box<Option<ASTNode>>),
 
     //Statements
     EmptyStatement,
@@ -98,15 +98,15 @@ pub enum ASTNode {
     /// Name log
     /// Name ms
     /// Name al
-    FunctionName(Box<ASTNode>, Option<Box<Vec<ASTNode>>>, Option<Box<ASTNode>>),
+    FunctionName(Box<ASTNode>, Option<Vec<ASTNode>>, Option<Box<ASTNode>>),
     /// Takes a Name and a FunctionBody
     NamedFunction(Box<ASTNode>, Box<ASTNode>),
 
     // Lists
-    ExpList(Box<Vec<ASTNode>>),
-    VarList(Box<Vec<ASTNode>>),
-    NameList(Box<Vec<ASTNode>>),
-    FieldList(Box<Vec<ASTNode>>),
+    ExpList(Vec<ASTNode>),
+    VarList(Vec<ASTNode>),
+    NameList(Vec<ASTNode>),
+    FieldList(Vec<ASTNode>),
     /// Takes a list of parameters and is vararg
     ParameterList(Box<Option<ASTNode>>, bool),
 

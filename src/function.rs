@@ -46,7 +46,7 @@ named!(parse_funcbody<ASTNode>, do_parse!(
 named!(parse_multiname<Vec<ASTNode>>, many1!(preceded!(ws!(tag!(".")), parse_name)));
 named!(parse_funcname<ASTNode>, do_parse!(
        n: map!(parse_name, Box::new)
-    >> m: opt!(map!(complete!(parse_multiname), Box::new))
+    >> m: opt!(complete!(parse_multiname))
     >> f: opt!(map!(complete!(preceded!(ws!(tag!(":")), parse_name)), Box::new))
     >> (ASTNode::FunctionName(n, m, f))
 ));
@@ -61,7 +61,7 @@ named!(parse_parlist<ASTNode>, do_parse!(
 named!(pub parse_block<ASTNode>, do_parse!(
            s: many0!(complete!(parse_statement))
         >> rs: opt!(ws!(complete!(parse_retstat)))
-        >> (astb!(Block, s, rs))
+        >> (ast!(Block, s, Box::new(rs)))
 ));
 
 #[cfg(test)]
@@ -80,7 +80,7 @@ mod tests {
               ]))), true));
 
     ast_test!(parse_parlist_5, parse_parlist, "a,b",
-              ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+              ast!(ParameterList, Box::new(Some(ast!(NameList, vec![
                 ast!(Name, "a".into()),
                 ast!(Name, "b".into())
               ]))), false));
