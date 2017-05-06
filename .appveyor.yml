@@ -23,4 +23,4 @@ build_script:
 
 test_script:
     - cargo test --verbose %cargoflags%
-    - cargo bench --verbose %cargoflags%
+    - IF "%channel%" == "nightly" cargo bench --verbose %cargoflags%

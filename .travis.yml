@@ -37,7 +37,9 @@ before_script:
 script:
   - cargo build --verbose ${CARGO_FLAGS}
   - cargo test --verbose ${CARGO_FLAGS}
-  - cargo bench --verbose ${CARGO_FLAGS}
+  - if [ "$TRAVIS_RUST_VERSION" == "nightly" ]; then
+        cargo bench --verbose ${CARGO_FLAGS};
+    fi
   - cargo doc --verbose ${CARGO_FLAGS}
 
 after_success:
