@@ -79,14 +79,14 @@ mod tests {
     ast_test!(parse_bool_f, parse_bool, "false", ast!(Bool, false));
     ast_test!(parse_vararg, parse_vararg, "...", ast!(VarArg));
 
-    ast_test!(parse_explist_1, parse_explist, "true", astb!(ExpList, vec![
+    ast_test!(parse_explist_1, parse_explist, "true", ast!(ExpList, vec![
         ast!(Bool, true)
     ]));
-    ast_test!(parse_explist_2, parse_explist, "true , true", astb!(ExpList, vec![
+    ast_test!(parse_explist_2, parse_explist, "true , true", ast!(ExpList, vec![
         ast!(Bool, true),
         ast!(Bool, true)
     ]));
-    ast_test!(parse_explist_3, parse_explist, "true , false, false", astb!(ExpList, vec![
+    ast_test!(parse_explist_3, parse_explist, "true , false, false", ast!(ExpList, vec![
         ast!(Bool, true),
         ast!(Bool, false),
         ast!(Bool, false)

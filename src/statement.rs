@@ -67,13 +67,13 @@ mod tests {
     ast_panic_test!(parse_goto_3, parse_goto, "got 17");
 
     ast_test!(parse_retstat_1, parse_retstat, "return false,true ;",
-              astb!(RetStat, Some(astb!(ExpList, vec![
+              astb!(RetStat, Some(ast!(ExpList, vec![
                 ast!(Bool, false),
                 ast!(Bool, true)
               ]))));
 
     ast_test!(parse_retstat_2, parse_retstat, "return 1.0",
-              astb!(RetStat, Some(astb!(ExpList, vec![
+              astb!(RetStat, Some(ast!(ExpList, vec![
                 ast!(Float, 1.0),
               ]))));
 

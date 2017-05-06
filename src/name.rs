@@ -84,19 +84,19 @@ mod tests {
     ast_test!(parse_label_1, parse_label, "::il::", ast!(Label, "il".into()));
     ast_test!(parse_label_2, parse_label, ":: z ::", ast!(Label, "z".into()));
 
-    ast_test!(parse_namelist_1, parse_namelist, "name1", astb!(NameList, vec![
+    ast_test!(parse_namelist_1, parse_namelist, "name1", ast!(NameList, vec![
         ast!(Name, "name1".into()),
     ]));
-    ast_test!(parse_namelist_2, parse_namelist, "name1 , name2", astb!(NameList, vec![
+    ast_test!(parse_namelist_2, parse_namelist, "name1 , name2", ast!(NameList, vec![
         ast!(Name, "name1".into()),
         ast!(Name, "name2".into()),
     ]));
-    ast_test!(parse_namelist_3, parse_namelist, "name1 , name2, name3", astb!(NameList, vec![
+    ast_test!(parse_namelist_3, parse_namelist, "name1 , name2, name3", ast!(NameList, vec![
         ast!(Name, "name1".into()),
         ast!(Name, "name2".into()),
         ast!(Name, "name3".into()),
     ]));
-    ast_test!(parse_namelist_4, parse_namelist, "a,b", astb!(NameList, vec![
+    ast_test!(parse_namelist_4, parse_namelist, "a,b", ast!(NameList, vec![
         ast!(Name, "a".into()),
         ast!(Name, "b".into()),
     ]));

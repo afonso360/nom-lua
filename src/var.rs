@@ -80,14 +80,14 @@ mod tests {
                     astb!(PrefixExp, astb!(Var, ast!(Name, "ayy".into()))),
                     ast!(Name, "zxc".into())));
 
-    ast_test!(parse_varlist_1, parse_varlist, "xcz", astb!(VarList, vec![
+    ast_test!(parse_varlist_1, parse_varlist, "xcz", ast!(VarList, vec![
         astb!(Var, ast!(Name, "xcz".into()))
     ]));
-    ast_test!(parse_varlist_2, parse_varlist, "xcz , mcx", astb!(VarList, vec![
+    ast_test!(parse_varlist_2, parse_varlist, "xcz , mcx", ast!(VarList, vec![
         astb!(Var, ast!(Name, "xcz".into())),
         astb!(Var, ast!(Name, "mcx".into()))
     ]));
-    ast_test!(parse_varlist_3, parse_varlist, "lak , k, jd3", astb!(VarList, vec![
+    ast_test!(parse_varlist_3, parse_varlist, "lak , k, jd3", ast!(VarList, vec![
         astb!(Var, ast!(Name, "lak".into())),
         astb!(Var, ast!(Name, "k".into())),
         astb!(Var, ast!(Name, "jd3".into()))

@@ -75,7 +75,7 @@ mod tests {
               ast!(ParameterList, Box::new(None), false));
 
     ast_test!(parse_parlist_3, parse_parlist, "name , ...",
-              ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+              ast!(ParameterList, Box::new(Some(ast!(NameList, vec![
                 ast!(Name, "name".into())
               ]))), true));
 
@@ -87,64 +87,64 @@ mod tests {
 
 
 
-    ast_test!(parse_block_1, parse_block, "", astb!(Block, vec![], None));
-    ast_test!(parse_block_2, parse_block, "::a::", astb!(Block, vec![
+    ast_test!(parse_block_1, parse_block, "", ast!(Block, vec![], Box::new(None)));
+    ast_test!(parse_block_2, parse_block, "::a::", ast!(Block, vec![
         ast!(Label, "a".into())
-    ], None));
+    ], Box::new(None)));
 
-    ast_test!(parse_block_3, parse_block, "::b:: return 1.0", astb!(Block, vec![
+    ast_test!(parse_block_3, parse_block, "::b:: return 1.0", ast!(Block, vec![
         ast!(Label, "b".into())
-    ], Some(astb!(RetStat, Some(astb!(ExpList, vec![
+    ], Box::new(Some(astb!(RetStat, Some(ast!(ExpList, vec![
         ast!(Float, 1.0)
-    ]))))));
+    ])))))));
 
 
     ast_test!(parse_funcbody_1, parse_funcbody, "( a, b ) ; end",
         astb!(FunctionBody,
-              Some(ast!(ParameterList, Box::new(Some(astb!(NameList, vec![
+              Some(ast!(ParameterList, Box::new(Some(ast!(NameList, vec![
                 ast!(Name, "a".into()),
                 ast!(Name, "b".into())
               ]))), false)),
-              astb!(Block, vec![
+              ast!(Block, vec![
                 ast!(EmptyStatement)
-              ], None)));
+              ], Box::new(None))));
 
     ast_test!(parse_functiondef_1, parse_functiondef, "function (...) ; end",
         astb!(Function,
          astb!(FunctionBody,
               Some(ast!(ParameterList, Box::new(None), true)),
-              astb!(Block, vec![ ast!(EmptyStatement) ], None))));
+              ast!(Block, vec![ ast!(EmptyStatement) ], Box::new(None)))));
 
     ast_test!(parse_local_function_1, parse_local_function, "local function b() ; end",
         astb!(NamedFunction,
               ast!(Name, "b".into()),
               astb!(FunctionBody,
                     Some(ast!(ParameterList, Box::new(None), false)),
-                    astb!(Block, vec![ ast!(EmptyStatement) ], None))));
+                    ast!(Block, vec![ ast!(EmptyStatement) ], Box::new(None)))));
 
     ast_test!(parse_funcname_1, parse_funcname, "a",
               ast!(FunctionName, Box::new(ast!(Name, "a".into())), None, None));
     ast_test!(parse_funcname_2, parse_funcname, "a.b",
               ast!(FunctionName,
                    Box::new(ast!(Name, "a".into())),
-                   Some(Box::new(vec![
-                                 ast!(Name, "b".into())
-                   ])),
+                   Some(vec![
+                        ast!(Name, "b".into())
+                   ]),
                    None));
     ast_test!(parse_funcname_3, parse_funcname, "a. b . c",
               ast!(FunctionName,
                    Box::new(ast!(Name, "a".into())),
-                   Some(Box::new(vec![
-                                 ast!(Name, "b".into()),
-                                 ast!(Name, "c".into())
-                   ])),
+                   Some(vec![
+                        ast!(Name, "b".into()),
+                        ast!(Name, "c".into())
+                   ]),
                    None));
     ast_test!(parse_funcname_4, parse_funcname, "a.b:c",
               ast!(FunctionName,
                    Box::new(ast!(Name, "a".into())),
-                   Some(Box::new(vec![
-                                 ast!(Name, "b".into()),
-                   ])),
+                   Some(vec![
+                        ast!(Name, "b".into()),
+                   ]),
                    Some(Box::new(ast!(Name, "c".into())))));
 }
 //		 function funcname funcbody |
