@@ -1,6 +1,6 @@
 [package]
 authors = ["Afonso Bordado <afonsobordado@az8.co>"]
-license-file = "LICENSE"
+license = "MIT/Apache-2.0"
 name = "nom-lua"
 readme = "README.md"
 version = "0.0.2"

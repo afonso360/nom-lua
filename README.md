@@ -80,19 +80,18 @@ Lua 5.3 parser written with nom
 
 ## License
 
-nom-lua is licensed under GPL General Public License 2.0 only with a Linking exception
+nom-lua is primarily distributed under the terms of both the MIT license
+and the Apache License (Version 2.0).
 
-This means that you can link it with your program even if its license is not GPL
-
-Read [LICENSE][license] for more information.
+See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
 
 [travis-badge]: https://img.shields.io/travis/afonso360/nom-lua/master.svg?style=flat-square
 [appveyor-badge]: https://img.shields.io/appveyor/ci/afonso360/nom-lua/master.svg?style=flat-square
 [coveralls-badge]: https://img.shields.io/coveralls/afonso360/nom-lua/master.svg?style=flat-square
-[license-badge]: https://img.shields.io/badge/license-GPLv2%20With%20Linking%20exception-blue.svg?style=flat-square
+[license-badge]: https://img.shields.io/badge/license-MIT%20or%20Apache%202.0-blue.svg?style=flat-square
 [docs-badge]: https://img.shields.io/badge/docs-0.0.2-blue.svg?style=flat-square
 [travis]: https://travis-ci.org/afonso360/nom-lua
 [appveyor]: https://ci.appveyor.com/project/afonso360/nom-lua
 [coveralls]: https://coveralls.io/github/afonso360/nom-lua
 [docs]: https://docs.rs/nom-lua/0.0.2/nom-lua/
-[license]: LICENSE
+[license]: https://github.com/afonso360/nom-lua#license
