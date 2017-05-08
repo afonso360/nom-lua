@@ -1,4 +1,4 @@
-# nom-lua [![travis-badge][]][travis] [![appveyor-badge][]][appveyor] [![coveralls-badge][]][coveralls] [![license-badge][]][license] [![docs-badge][]][docs]
+# nom-lua [![crates-badge][]][crates] [![travis-badge][]][travis] [![appveyor-badge][]][appveyor] [![coveralls-badge][]][coveralls] [![license-badge][]][license] [![docs-badge][]][docs]
 
 Lua 5.3 parser written with nom
 
@@ -85,6 +85,7 @@ and the Apache License (Version 2.0).
 
 See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
 
+[crates-badge]: https://img.shields.io/crates/v/nom-lua.svg?style=flat-square
 [travis-badge]: https://img.shields.io/travis/afonso360/nom-lua/master.svg?style=flat-square
 [appveyor-badge]: https://img.shields.io/appveyor/ci/afonso360/nom-lua/master.svg?style=flat-square
 [coveralls-badge]: https://img.shields.io/coveralls/afonso360/nom-lua/master.svg?style=flat-square
@@ -95,3 +96,4 @@ See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
 [coveralls]: https://coveralls.io/github/afonso360/nom-lua
 [docs]: https://docs.rs/nom-lua/0.0.2/nom-lua/
 [license]: https://github.com/afonso360/nom-lua#license
+[crates]: https://crates.io/crates/nom-lua
