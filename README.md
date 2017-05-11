@@ -94,6 +94,6 @@ See [LICENSE-APACHE](LICENSE-APACHE) and [LICENSE-MIT](LICENSE-MIT) for details.
 [travis]: https://travis-ci.org/afonso360/nom-lua
 [appveyor]: https://ci.appveyor.com/project/afonso360/nom-lua
 [coveralls]: https://coveralls.io/github/afonso360/nom-lua
-[docs]: https://docs.rs/nom-lua/0.0.2/nom-lua/
+[docs]: https://docs.rs/nom-lua/
 [license]: https://github.com/afonso360/nom-lua#license
 [crates]: https://crates.io/crates/nom-lua

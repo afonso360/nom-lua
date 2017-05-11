@@ -1,11 +1,12 @@
 [package]
-authors = ["Afonso Bordado <afonsobordado@az8.co>"]
-license = "MIT/Apache-2.0"
 name = "nom-lua"
-readme = "README.md"
+authors = ["Afonso Bordado <afonsobordado@az8.co>"]
+# Bump version on README.md and src/lib.rs
 version = "0.0.2"
+license = "MIT/Apache-2.0"
+readme = "README.md"
 repository = "https://github.com/afonso360/nom-lua"
-documentation = "https://docs.rs/nom-lua/0.0.2/nom-lua"
+documentation = "https://docs.rs/nom-lua/"
 homepage = "https://github.com/afonso360/nom-lua"
 description = """
 Lua 5.3 parser written in nom
@@ -15,7 +16,8 @@ keywords = ["nom", "lua", "parser"]
 include = [
     "**/*.rs",
     "Cargo.toml",
-    "LICENSE",
+    "LICENSE-MIT",
+    "LICENSE-APACHE",
     "README.md",
 ]
 
