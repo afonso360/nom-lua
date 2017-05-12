@@ -29,7 +29,7 @@ travis-ci = { repository = "afonso360/nom-lua" }
 appveyor = { repository = "afonso360/nom-lua" }
 
 [dependencies]
-nom = "^2.2"
+nom = "^3.0"
 hexf-parse = "0.1.0"
 dot = { version = "0.1.2", optional = true }
 
