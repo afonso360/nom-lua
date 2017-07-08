@@ -11,6 +11,7 @@ use std::fmt::{Debug, Display, Formatter};
 
 #[derive(Clone, PartialEq)]
 pub enum ASTNode {
+    // TODO: Should this be u64?
     Integer(i64),
     Float(f64),
     Bool(bool),

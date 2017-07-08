@@ -111,4 +111,17 @@ mod tests {
     ast_test!(parse_number_3, parse_number, "0x20", ast!(Integer, 0x20));
     ast_test!(parse_number_4, parse_number, "1000000000000000000000000", ast!(Float, 1e+24));
     //ast_panic_test!(parse_number_5, parse_number, "10f");
+
+    quickcheck! {
+        fn quickcheck_can_parse_default_int_formatter(x: u64) -> bool {
+            use ASTNode::*;
+            use nom::IResult;
+            let formatted = format!("{}", x);
+            let parsed = super::parse_int(formatted.as_bytes());
+            if let IResult::Done(a, b) = parsed {
+                return b == ast!(Integer, x as i64);
+            }
+            false
+        }
+    }
 }

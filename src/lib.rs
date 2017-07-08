@@ -10,6 +10,9 @@
 //#![deny(warnings)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
 
+// Remove this
+#![allow(unused_macros, unused_imports)]
+
 #[macro_use]
 extern crate nom;
 
@@ -18,6 +21,10 @@ extern crate hexf_parse;
 
 #[cfg(feature="graphviz")]
 extern crate dot;
+
+#[cfg(test)]
+#[macro_use]
+extern crate quickcheck;
 
 // this is going to be usefull when looking at this crate
 // https://www.lua.org/manual/5.3/manual.html#9
