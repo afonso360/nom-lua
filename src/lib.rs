@@ -10,7 +10,7 @@
 //#![deny(warnings)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
 
-// Remove this
+// TODO: Remove this
 #![allow(unused_macros, unused_imports)]
 
 #[macro_use]
@@ -26,71 +26,15 @@ extern crate quickcheck;
 // this is going to be usefull when looking at this crate
 // https://www.lua.org/manual/5.3/manual.html#9
 
-macro_rules! ast_panic_test {
-    ($name: ident, $func: ident, $input: expr) => {
-        #[test]
-        #[should_panic]
-        fn $name () {
-            use super::*;
-            $func($input.as_bytes()).unwrap().1;
-        }
-    }
-}
-
-macro_rules! ast_test {
-    ($name: ident, $func: ident, $input: expr, $output: expr) => {
-        #[test]
-        fn $name () {
-            use super::*;
-            assert_eq!($func($input.as_bytes()).unwrap().1, $output);
-        }
-    }
-}
-
-macro_rules! ast_valid {
-    ($name: ident, $func: ident, $input: expr) => {
-        #[test]
-        fn $name () {
-            use super::*;
-            assert!(match $func($input.as_bytes()).unwrap().1 {
-                _ => true,
-            });
-        }
-    }
-}
-
-macro_rules! ast_invalid {
-    ($name: ident, $func: ident, $input: expr) => {
-        #[test]
-        #[should_panic]
-        fn $name () {
-            use super::*;
-            $func($input.as_bytes()).unwrap().1;
-        }
-    }
-}
-
-macro_rules! astb {
-    ($name: ident, $($a: expr),*) => {
-        $name($(Box::new($a)),*)
-    };
-}
-
-macro_rules! ast {
-    ($name: ident) => {
-        $name
-    };
-    ($name: ident, $($a: expr),*) => {
-        $name($($a),*)
-    };
-}
-
-
 
 use function::parse_block;
 pub use ast::ASTNode;
 use std::io::Read;
 
+#[macro_use]
+mod macros;
+
+pub mod lexer;
 pub mod ast;
 pub mod op;
 pub mod number;
