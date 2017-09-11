@@ -76,6 +76,7 @@ Lua 5.3 parser written with nom
 - [ ] Enforce ASTNodes correctness on more operations
 	For example, BinOp could take a BinOp enum instead of ASTNode
 - [ ] Build all features on CI
+- [ ] Make this crate no-std
 
 
 ## License
