@@ -127,14 +127,14 @@ impl Debug for ASTNode {
             Bool(val) => write!(format, "{}", val),
             String(ref val) => write!(format, "\"{}\"", val),
 
-            /// Holds a lua name, usually a function or variable name
-            /// Contains `ASTNode::String`
+            // Holds a lua name, usually a function or variable name
+            // Contains `ASTNode::String`
             Name(ref val) => write!(format, "(name {})", val),
 
-            /// Holds a lua label name
-            /// Contains `ASTNode::Name`
+            // Holds a lua label name
+            // Contains `ASTNode::Name`
             Label(ref val) => write!(format, "::{}::", val),
-            /// Contains an expression
+            // Contains an expression
             Paren(ref expr) => write!(format, "({})", expr),
 
             // Block
