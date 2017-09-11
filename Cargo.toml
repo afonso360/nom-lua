@@ -30,7 +30,6 @@ appveyor = { repository = "afonso360/nom-lua" }
 
 [dependencies]
 nom = "^3.2"
-hexf-parse = "^0.1"
 dot = { version = "^0.1", optional = true }
 
 [dev-dependencies]

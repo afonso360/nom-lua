@@ -16,9 +16,6 @@
 #[macro_use]
 extern crate nom;
 
-#[macro_use]
-extern crate hexf_parse;
-
 #[cfg(feature="graphviz")]
 extern crate dot;
 
