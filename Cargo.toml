@@ -23,14 +23,18 @@ include = [
 
 [features]
 graphviz = ["dot"]
+nightly = []
 
 [badges]
 travis-ci = { repository = "afonso360/nom-lua" }
 appveyor = { repository = "afonso360/nom-lua" }
 
 [dependencies]
-nom = "^3.2"
 dot = { version = "^0.1", optional = true }
+
+[dependencies.nom]
+version = "^3"
+features = ["nightly"]
 
 [dev-dependencies]
 quickcheck = "^0.4"

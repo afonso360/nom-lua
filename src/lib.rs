@@ -50,6 +50,8 @@ pub use nom::IResult;
 
 //named!(pub parse_chunk<ASTNode>, ws!(parse_block));
 use exp::parse_exp;
+use lexer::{lex, Token};
+named!(pub lex_chunk<Vec<Token>>, dbg_dmp!(lex));
 named!(pub parse_chunk<ASTNode>, dbg_dmp!(ws!(parse_exp)));
 
 // TODO: Implement our own Error type
