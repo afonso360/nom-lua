@@ -44,11 +44,23 @@ enum BinOp<'a> {
     Concat(&'a mut ASTNode, &'a mut ASTNode),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, PartialEq)]
 enum UnOp<'a> {
     // UnaryOps
     BinNot(&'a mut ASTNode),
     Not(&'a mut ASTNode),
     Len(&'a mut ASTNode),
     UMin(&'a mut ASTNode),
+}
+
+impl<'a> Clone for UnOp<'a> {
+    fn clone(&self) -> UnOp<'a> {
+        use self::UnOp::*;
+        match *self {
+            BinNot(ast) => BinNot(&mut ast.clone()),
+            Not(ast) => Not(&mut ast.clone()),
+            Len(ast) => Len(&mut ast.clone()),
+            UMin(ast) => UMin(&mut ast.clone()),
+        }
+    }
 }
