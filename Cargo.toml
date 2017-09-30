@@ -23,6 +23,7 @@ include = [
 
 [features]
 graphviz = ["dot"]
+no_std = []
 
 [badges]
 travis-ci = { repository = "afonso360/nom-lua" }
