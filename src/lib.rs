@@ -34,7 +34,6 @@ use std::io::Read;
 #[macro_use]
 mod macros;
 
-pub mod lexer;
 pub mod ast;
 pub mod op;
 pub mod number;
