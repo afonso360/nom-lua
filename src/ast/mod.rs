@@ -6,8 +6,11 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+mod op;
+
 use std::fmt;
 use std::fmt::{Debug, Display, Formatter};
+use op::{BinOp, UnOp};
 
 #[derive(Clone, PartialEq)]
 pub enum ASTNode {
@@ -22,48 +25,14 @@ pub enum ASTNode {
 
     Block(Vec<ASTNode>, Box<Option<ASTNode>>),
 
+    UnOp(UnOp),
+    BinOp(BinOp),
+
     //Statements
     EmptyStatement,
     Break,
     Goto(Box<ASTNode>),
     RetStat(Box<Option<ASTNode>>),
-
-    // ArithmeticOps
-    Add(Box<ASTNode>, Box<ASTNode>),
-    Sub(Box<ASTNode>, Box<ASTNode>),
-    Mul(Box<ASTNode>, Box<ASTNode>),
-    Div(Box<ASTNode>, Box<ASTNode>),
-    Exp(Box<ASTNode>, Box<ASTNode>),
-    FDiv(Box<ASTNode>, Box<ASTNode>),
-    Mod(Box<ASTNode>, Box<ASTNode>),
-
-    // LogicOps
-    And(Box<ASTNode>, Box<ASTNode>),
-    Or(Box<ASTNode>, Box<ASTNode>),
-
-    // RelationalOps
-    Lt(Box<ASTNode>, Box<ASTNode>),
-    Le(Box<ASTNode>, Box<ASTNode>),
-    Gt(Box<ASTNode>, Box<ASTNode>),
-    Ge(Box<ASTNode>, Box<ASTNode>),
-    Eq(Box<ASTNode>, Box<ASTNode>),
-    Ne(Box<ASTNode>, Box<ASTNode>),
-
-    // BinaryOps
-    BitOr(Box<ASTNode>, Box<ASTNode>),
-    BitAnd(Box<ASTNode>, Box<ASTNode>),
-    BitXor(Box<ASTNode>, Box<ASTNode>),
-    Rsh(Box<ASTNode>, Box<ASTNode>),
-    Lsh(Box<ASTNode>, Box<ASTNode>),
-
-    // UnaryOps
-    BinNot(Box<ASTNode>),
-    Not(Box<ASTNode>),
-    Len(Box<ASTNode>),
-    UMin(Box<ASTNode>),
-
-    // ConcatenationOps
-    Concat(Box<ASTNode>, Box<ASTNode>),
 
     // Expression
     /// Takes one of
