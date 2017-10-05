@@ -27,13 +27,13 @@ named!(pub parse_prefixexp<ASTNode>, map!(map!(alt!(
         parse_var
 ), Box::new), ASTNode::PrefixExp)) ;
 
-named!(pub parse_explist<ASTNode>, map!(
-            map!(do_parse!(
-                   a: parse_exp
-                >> b: many0!(preceded!(ws!(tag!(",")), parse_exp))
-                >> (a,b)
-            ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
-ASTNode::ExpList));
+named!(pub parse_explist< ASTNode >,
+       map!(
+           separated_nonempty_list!(ws!(tag!(",")), parse_exp),
+           ASTNode::ExpList
+        )
+);
+
 
 named!(pub parse_exp<ASTNode>, alt!(
                 parse_op |

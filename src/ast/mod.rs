@@ -6,11 +6,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-mod op;
+pub mod op;
 
-use std::fmt;
-use std::fmt::{Debug, Display, Formatter};
-use op::{BinOp, UnOp};
+use core::fmt::{self, Debug, Display, Formatter};
+pub use ast::op::{BinOp, UnOp};
 
 #[derive(Clone, PartialEq)]
 pub enum ASTNode<'a> {
@@ -91,9 +90,9 @@ impl<'a> Debug for ASTNode<'a> {
     fn fmt(&self, format: &mut Formatter) -> fmt::Result {
         use self::ASTNode::*;
         match *self {
-            Integer(val) => write!(format, "{}", val),
-            Float(val) => write!(format, "{}f", val),
-            Bool(val) => write!(format, "{}", val),
+            Integer(ref val) => write!(format, "{}", val),
+            Float(ref val) => write!(format, "{}f", val),
+            Bool(ref val) => write!(format, "{}", val),
             String(ref val) => write!(format, "\"{}\"", val),
 
             // Holds a lua name, usually a function or variable name
@@ -104,29 +103,32 @@ impl<'a> Debug for ASTNode<'a> {
             // Contains `ASTNode::Name`
             Label(ref val) => write!(format, "::{}::", val),
             // Contains an expression
-            Paren(ref expr) => write!(format, "({})", expr),
+            Paren(ref expr) => write!(format, "({:?})", expr),
 
             // Block
             Block(ref statements, ref retstat) => {
                 write!(format, "(block\n");
                 for e in statements.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 if let Some(ref ret_ast) = **retstat {
-                    write!(format, "\treturn {}\n", ret_ast);
+                    write!(format, "\treturn {:?}\n", ret_ast);
                 }
                 write!(format, ")")
             }
+
+            UnOp(ref op) => write!(format, "{:?}", op),
+            BinOp(ref op) => write!(format, "{:?}", op),
 
             // Statements
             EmptyStatement => write!(format, "(statement)"),
             RetStat(ref para) => write!(format, "(ret {:?})", para),
             Break => write!(format, "(break)"),
-            Goto(ref loc) => write!(format, "goto {}", loc),
+            Goto(ref loc) => write!(format, "goto {:?}", loc),
 
 
             // Exp
-            PrefixExp(ref e) => write!(format, "{}", e),
+            PrefixExp(ref e) => write!(format, "{:?}", e),
 
             Nil => write!(format, "nil"),
             VarArg => write!(format, "..."),
@@ -134,37 +136,37 @@ impl<'a> Debug for ASTNode<'a> {
             TableConstructor(ref fieldlist) => write!(format, "{{ {:?} }}", fieldlist),
 
             // Function
-            Function(ref f) => write!(format, "{}", f),
-            FunctionBody(ref parlist, ref fbody) => write!(format, "function ({:?}) {}", parlist, fbody),
-            FunctionName(ref n, ref m, ref f) => write!(format, "{}.{:?}:{:?}", n, m, f),
-            NamedFunction(ref n, ref f) => write!(format, "(named {} {})", n, f),
+            Function(ref f) => write!(format, "{:?}", f),
+            FunctionBody(ref parlist, ref fbody) => write!(format, "function ({:?}) {:?}", parlist, fbody),
+            FunctionName(ref n, ref m, ref f) => write!(format, "{:?}.{:?}:{:?}", n, m, f),
+            NamedFunction(ref n, ref f) => write!(format, "(named {:?} {:?})", n, f),
 
             // Lists
             ExpList(ref explist) => {
                 write!(format, "(explist\n");
                 for e in explist.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 write!(format, ")")
             },
             VarList(ref varlist) => {
                 write!(format, "(varlist\n");
                 for e in varlist.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 write!(format, ")")
             },
             NameList(ref namelist) => {
                 write!(format, "(namelist\n");
                 for e in namelist.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 write!(format, ")")
             },
             ParameterList(ref plist, ref va) => {
                 write!(format, "(paramlist\n");
                 for e in plist.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 if *va {
                     write!(format, "\t...\n");
@@ -174,22 +176,22 @@ impl<'a> Debug for ASTNode<'a> {
             FieldList(ref fieldlist) => {
                 write!(format, "(fieldlist\n");
                 for e in fieldlist.iter() {
-                    write!(format, "\t{}\n", e);
+                    write!(format, "\t{:?}\n", e);
                 }
                 write!(format, ")")
             },
 
             // Field
-            FieldSingle(ref e) => write!(format, "(field {})", e),
-            FieldAssign(ref n, ref e) => write!(format, "(field {} => {})", n, e),
+            FieldSingle(ref e) => write!(format, "(field {:?})", e),
+            FieldAssign(ref n, ref e) => write!(format, "(field {:?} => {:?})", n, e),
 
             //Local
-            Local(ref inner) => write!(format, "local {}", inner),
+            Local(ref inner) => write!(format, "local {:?}", inner),
 
             //Var
-            Var(ref name) => write!(format, "(var {})", name),
-            VarPrefixed(ref pe, ref e) => write!(format, "{}[{}]", pe, e),
-            VarListAccess(ref pe, ref n) => write!(format, "{}.{}", pe, n)
+            Var(ref name) => write!(format, "(var {:?})", name),
+            VarPrefixed(ref pe, ref e) => write!(format, "{:?}[{:?}]", pe, e),
+            VarListAccess(ref pe, ref n) => write!(format, "{:?}.{:?}", pe, n)
         }
     }
 

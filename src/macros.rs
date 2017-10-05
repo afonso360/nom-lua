@@ -57,6 +57,12 @@ macro_rules! astb {
     };
 }
 
+macro_rules! astmr {
+    ($name: path, $($a: expr),*) => {
+        $name($(&mut $a),*)
+    };
+}
+
 macro_rules! ast {
     ($name: ident) => {
         $name

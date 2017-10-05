@@ -16,6 +16,9 @@
 #[macro_use]
 extern crate nom;
 
+#[macro_use]
+extern crate core;
+
 #[cfg(feature="graphviz")]
 extern crate dot;
 
@@ -49,17 +52,20 @@ pub use nom::IResult;
 
 //named!(pub parse_chunk<ASTNode>, ws!(parse_block));
 use exp::parse_exp;
-named!(pub parse_chunk<ASTNode>, dbg_dmp!(ws!(parse_exp)));
+//named!(pub parse_chunk<ASTNode>, dbg_dmp!(ws!(parse_exp)));
+pub fn parse_chunk<'a>(input: &'a [u8]) -> IResult<&[u8], ASTNode> {
+    parse_exp(input)
+}
 
 // TODO: Implement our own Error type
-pub fn parse_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<ASTNode> {
+pub fn parse_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<ASTNode<'a>> {
     match parse_chunk(s.into()) {
         IResult::Done(_, a) => Some(a),
         _ => None
     }
 }
 
-pub fn parse<T: Read>(mut s: T) -> Option<ASTNode> {
+pub fn parse<'a, T: Read>(mut s: T) -> Option<ASTNode<'a>> {
     let mut buf = vec![];
     s.read_to_end(&mut buf);
     buf.pop(); //Remove EOF

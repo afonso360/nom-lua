@@ -52,13 +52,12 @@ named!(pub parse_label<ASTNode>, map!(delimited!(
 ASTNode::Label));
 
 
-named!(pub parse_namelist<ASTNode>, map!(
-            map!(do_parse!(
-                   a: parse_name
-                >> b: many0!(preceded!(ws!(tag!(",")), parse_name))
-                >> ((a,b))
-            ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
-ASTNode::NameList));
+named!(pub parse_namelist< ASTNode >,
+       map!(
+           separated_nonempty_list!(ws!(tag!(",")), parse_name),
+           ASTNode::NameList
+        )
+);
 
 #[cfg(test)]
 mod tests {

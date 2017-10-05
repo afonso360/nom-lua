@@ -12,13 +12,12 @@ use exp::{parse_prefixexp, parse_exp};
 use name::parse_name;
 use nom::IResult;
 
-named!(pub parse_varlist<ASTNode>, map!(
-            map!(do_parse!(
-                   a: parse_var
-                >> b: many0!(preceded!(ws!(tag!(",")), parse_var))
-                >> ((a,b))
-            ), |(a, mut b): (_, Vec < ASTNode >) | { b.insert(0, a); b }),
-ASTNode::VarList));
+named!(pub parse_varlist< ASTNode >,
+       map!(
+           separated_nonempty_list!(ws!(tag!(",")), parse_var),
+           ASTNode::VarList
+        )
+);
 
 named!(pub parse_var<ASTNode>, alt!(
     map!(do_parse!(

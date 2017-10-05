@@ -11,76 +11,38 @@ use std::fmt::{Debug, Display, Formatter};
 use super::ASTNode;
 use std::clone::Clone;
 
-#[derive(PartialEq)]
-enum BinOp<'a> {
+#[derive(PartialEq, Clone)]
+pub enum BinOp<'a> {
     // ArithmeticOps
-    Add(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Sub(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Mul(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Div(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Exp(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    FDiv(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Mod(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
+    Add(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Sub(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Mul(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Div(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Exp(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    FDiv(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Mod(&'a ASTNode<'a>, &'a ASTNode<'a>),
 
     // LogicOps
-    And(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Or(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
+    And(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Or(&'a ASTNode<'a>, &'a ASTNode<'a>),
 
     // RelationalOps
-    Lt(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Le(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Gt(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Ge(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Eq(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Ne(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
+    Lt(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Le(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Gt(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Ge(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Eq(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Ne(&'a ASTNode<'a>, &'a ASTNode<'a>),
 
     // BinaryOps
-    BitOr(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    BitAnd(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    BitXor(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Rsh(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-    Lsh(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
+    BitOr(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    BitAnd(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    BitXor(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Rsh(&'a ASTNode<'a>, &'a ASTNode<'a>),
+    Lsh(&'a ASTNode<'a>, &'a ASTNode<'a>),
 
     // ConcatenationOps
-    Concat(&'a mut ASTNode<'a>, &'a mut ASTNode<'a>),
-}
-
-impl<'a> Clone for BinOp<'a> {
-    fn clone(&self) -> BinOp<'a> {
-        use self::BinOp::*;
-        match *self {
-            // ArithmeticOps
-            Add(astl, astr) => Add(&mut astl.clone(), &mut astr.clone()),
-            Sub(astl, astr) => Sub(&mut astl.clone(), &mut astr.clone()),
-            Mul(astl, astr) => Mul(&mut astl.clone(), &mut astr.clone()),
-            Div(astl, astr) => Div(&mut astl.clone(), &mut astr.clone()),
-            Exp(astl, astr) => Exp(&mut astl.clone(), &mut astr.clone()),
-            FDiv(astl, astr) => FDiv(&mut astl.clone(), &mut astr.clone()),
-            Mod(astl, astr) => Mod(&mut astl.clone(), &mut astr.clone()),
-
-            // LogicOps
-            And(astl, astr) => And(&mut astl.clone(), &mut astr.clone()),
-            Or(astl, astr) => Or(&mut astl.clone(), &mut astr.clone()),
-
-            // RelationalOps
-            Lt(astl, astr) => Lt(&mut astl.clone(), &mut astr.clone()),
-            Le(astl, astr) => Le(&mut astl.clone(), &mut astr.clone()),
-            Gt(astl, astr) => Gt(&mut astl.clone(), &mut astr.clone()),
-            Ge(astl, astr) => Ge(&mut astl.clone(), &mut astr.clone()),
-            Eq(astl, astr) => Eq(&mut astl.clone(), &mut astr.clone()),
-            Ne(astl, astr) => Ne(&mut astl.clone(), &mut astr.clone()),
-
-            // BinaryOps
-            BitOr(astl, astr) => BitOr(&mut astl.clone(), &mut astr.clone()),
-            BitAnd(astl, astr) => BitAnd(&mut astl.clone(), &mut astr.clone()),
-            BitXor(astl, astr) => BitXor(&mut astl.clone(), &mut astr.clone()),
-            Rsh(astl, astr) => Rsh(&mut astl.clone(), &mut astr.clone()),
-            Lsh(astl, astr) => Lsh(&mut astl.clone(), &mut astr.clone()),
-
-            // ConcatenationOps
-            Concat(astl, astr) => Concat(&mut astl.clone(), &mut astr.clone()),
-        }
-    }
+    Concat(&'a ASTNode<'a>, &'a ASTNode<'a>),
 }
 
 impl<'a> Debug for BinOp<'a> {
@@ -88,59 +50,47 @@ impl<'a> Debug for BinOp<'a> {
         use self::BinOp::*;
         match *self {
             // ArithmeticOps
-            Add(ref left, ref right) => write!(format, "({} + {})", left, right),
-            Sub(ref left, ref right) => write!(format, "({} - {})", left, right),
-            Mul(ref left, ref right) => write!(format, "({} * {})", left, right),
-            Div(ref left, ref right) => write!(format, "({} / {})", left, right),
-            Exp(ref left, ref right) => write!(format, "({} ^ {})", left, right),
-            FDiv(ref left, ref right) => write!(format, "({} // {})", left, right),
-            Mod(ref left, ref right) => write!(format, "({} % {})", left, right),
+            Add(ref left, ref right) => write!(format, "({:?} + {:?})", left, right),
+            Sub(ref left, ref right) => write!(format, "({:?} - {:?})", left, right),
+            Mul(ref left, ref right) => write!(format, "({:?} * {:?})", left, right),
+            Div(ref left, ref right) => write!(format, "({:?} / {:?})", left, right),
+            Exp(ref left, ref right) => write!(format, "({:?} ^ {:?})", left, right),
+            FDiv(ref left, ref right) => write!(format, "({:?} // {:?})", left, right),
+            Mod(ref left, ref right) => write!(format, "({:?} % {:?})", left, right),
 
             // LogicOps
-            And(ref left, ref right) => write!(format, "({} and {})", left, right),
-            Or(ref left, ref right) => write!(format, "({} or {})", left, right),
+            And(ref left, ref right) => write!(format, "({:?} and {:?})", left, right),
+            Or(ref left, ref right) => write!(format, "({:?} or {:?})", left, right),
 
             // ArithmeticOps
-            Lt(ref left, ref right) => write!(format, "({} < {})", left, right),
-            Le(ref left, ref right) => write!(format, "({} <= {})", left, right),
-            Gt(ref left, ref right) => write!(format, "({} > {})", left, right),
-            Ge(ref left, ref right) => write!(format, "({} >= {})", left, right),
-            Eq(ref left, ref right) => write!(format, "({} == {})", left, right),
-            Ne(ref left, ref right) => write!(format, "({} ~= {})", left, right),
+            Lt(ref left, ref right) => write!(format, "({:?} < {:?})", left, right),
+            Le(ref left, ref right) => write!(format, "({:?} <= {:?})", left, right),
+            Gt(ref left, ref right) => write!(format, "({:?} > {:?})", left, right),
+            Ge(ref left, ref right) => write!(format, "({:?} >= {:?})", left, right),
+            Eq(ref left, ref right) => write!(format, "({:?} == {:?})", left, right),
+            Ne(ref left, ref right) => write!(format, "({:?} ~= {:?})", left, right),
 
             // BinaryOps
-            BitAnd(ref left, ref right) => write!(format, "({} & {})", left, right),
-            BitOr(ref left, ref right) => write!(format, "({} | {})", left, right),
-            BitXor(ref left, ref right) => write!(format, "({} ~ {})", left, right),
-            Rsh(ref left, ref right) => write!(format, "({} >> {})", left, right),
-            Lsh(ref left, ref right) => write!(format, "({} << {})", left, right),
+            BitAnd(ref left, ref right) => write!(format, "({:?} & {:?})", left, right),
+            BitOr(ref left, ref right) => write!(format, "({:?} | {:?})", left, right),
+            BitXor(ref left, ref right) => write!(format, "({:?} ~ {:?})", left, right),
+            Rsh(ref left, ref right) => write!(format, "({:?} >> {:?})", left, right),
+            Lsh(ref left, ref right) => write!(format, "({:?} << {:?})", left, right),
 
 
             // ConcatenationOps
-            Concat(ref left, ref right) => write!(format, "{} .. {}", left, right),
+            Concat(ref left, ref right) => write!(format, "{:?} .. {:?}", left, right),
         }
     }
 }
 
-#[derive(PartialEq)]
-enum UnOp<'a> {
+#[derive(PartialEq, Clone)]
+pub enum UnOp<'a> {
     // UnaryOps
-    BinNot(&'a mut ASTNode<'a>),
-    Not(&'a mut ASTNode<'a>),
-    Len(&'a mut ASTNode<'a>),
-    UMin(&'a mut ASTNode<'a>),
-}
-
-impl<'a> Clone for UnOp<'a> {
-    fn clone(&self) -> UnOp<'a> {
-        use self::UnOp::*;
-        match *self {
-            BinNot(ast) => BinNot(&mut ast.clone()),
-            Not(ast) => Not(&mut ast.clone()),
-            Len(ast) => Len(&mut ast.clone()),
-            UMin(ast) => UMin(&mut ast.clone()),
-        }
-    }
+    BinNot(&'a ASTNode<'a>),
+    Not(&'a ASTNode<'a>),
+    Len(&'a ASTNode<'a>),
+    UMin(&'a ASTNode<'a>),
 }
 
 impl<'a> Debug for UnOp<'a> {
@@ -148,10 +98,10 @@ impl<'a> Debug for UnOp<'a> {
         use self::UnOp::*;
         match *self {
             // UnaryOps
-            BinNot(ref right) => write!(format, "~{}", right),
-            Len(ref right) => write!(format, "#{}", right),
-            UMin(ref right) => write!(format, "-{}", right),
-            Not(ref right) => write!(format, "not {}", right),
+            BinNot(ref right) => write!(format, "~{:?}", right),
+            Len(ref right) => write!(format, "#{:?}", right),
+            UMin(ref right) => write!(format, "-{:?}", right),
+            Not(ref right) => write!(format, "not {:?}", right),
         }
     }
 }

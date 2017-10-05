@@ -15,19 +15,22 @@
 
 use std::str;
 
-use ast::ASTNode;
-use ast::ASTNode::*;
+use ast::{ ASTNode, UnOp, BinOp };
 use super::exp::parse_exp;
 use super::number::parse_number;
 
 //named!(pub parse_op<ASTNode>, dbg_dmp!(alt!(parse_exponent | parse_unop | parse_binop)));
 // for some reason we have to use the map
-named!(pub parse_op<ASTNode>, map!(parse_exponent, |a|a));
+//named!(pub parse_op<ASTNode>, map!(parse_exponent, |a|a));
+named!(pub parse_op<ASTNode>, do_parse!(tag!("") >> (ASTNode::UnOp(astmr!(UnOp::Not, ASTNode::Integer(10))))));
 
-named!(parse_unop<ASTNode>, do_parse!(
+/*
+named!(parse_unop<ASTNode>, map!(do_parse!(
            unop: many0!(unop)
         >> right: parse_binop
-        >> (fold_unop(unop, right))));
+        >> (fold_unop(unop, right))),
+        ASTNode::UnOp
+));
 
 named!(parse_binop<ASTNode>, do_parse!(
            left: parse_atom
@@ -66,72 +69,46 @@ named!(binop<BinOp>, alt!(
     ws!(tag!("or"))  => { |_| BinOp::Or }
 ));
 
-#[derive(Debug)]
-pub enum BinOp {
-    Exp,
-    Mul,
-    Div,
-    FDiv,
-    Mod,
-    Add,
-    Sub,
-    Concat,
-    Lsh,
-    Rsh,
-    BitAnd,
-    BitXor,
-    BitOr,
-    Lt,
-    Gt,
-    Le,
-    Ge,
-    Ne,
-    Eq,
-    And,
-    Or,
-}
-
-
-fn fold_unop(unop: Vec<UnOp>, initial: ASTNode) -> ASTNode {
+fn fold_unop<'a>(unop: Vec<ASTNode<'a>>, initial: ASTNode<'a>) -> UnOp<'a> {
     unop.into_iter().fold(initial, |acc, op| {
         println!("Proc unop: {:?}", op);
         match op {
-            UnOp::BinNot => astb!(BinNot, acc),
-            UnOp::Not => astb!(Not, acc),
-            UnOp::Len => astb!(Len, acc),
-            UnOp::UMin => astb!(UMin, acc),
+            UnOp::BinNot => astmr!(UnOp::BinNot, acc),
+            UnOp::Not => astmr!(UnOp::Not, acc),
+            UnOp::Len => astmr!(UnOp::Len, acc),
+            UnOp::UMin => astmr!(UnOp::UMin, acc),
         }
     })
 }
 
-fn fold_binop(left: ASTNode, remainder: Vec<(BinOp, ASTNode)>) -> ASTNode {
+fn fold_binop<'a>(left: ASTNode<'a>, remainder: Vec<(BinOp<'a>, ASTNode<'a>)>) -> BinOp<'a> {
     remainder.into_iter().fold(left, |acc, pair| {
         let (op, right) = pair;
         println!("Proc binop: {:?}", op);
         match op {
             //TODO: This is right Associative, we need to invert this operation
-            BinOp::Exp => astb!(Exp, acc, right),
-            BinOp::Mul => astb!(Mul, acc, right),
-            BinOp::Div => astb!(Div, acc, right),
-            BinOp::FDiv => astb!(FDiv, acc, right),
-            BinOp::Mod => astb!(Mod, acc, right),
-            BinOp::Add => astb!(Add, acc, right),
-            BinOp::Sub => astb!(Sub, acc, right),
+            Exp => astmr!(Exp, acc, right),
+            Mul => astmr!(Mul, acc, right),
+            Div => astmr!(Div, acc, right),
+            FDiv => astmr!(FDiv, acc, right),
+            Mod => astmr!(Mod, acc, right),
+            Add => astmr!(Add, acc, right),
+            Sub => astmr!(Sub, acc, right),
             //TODO: This is right Associative, we need to invert this operation
-            BinOp::Concat => astb!(Concat, acc, right),
-            BinOp::Lsh => astb!(Lsh, acc, right),
-            BinOp::Rsh => astb!(Rsh, acc, right),
-            BinOp::BitAnd => astb!(BitAnd, acc, right),
-            BinOp::BitXor => astb!(BitXor, acc, right),
-            BinOp::BitOr => astb!(BitOr, acc, right),
-            BinOp::Lt => astb!(Lt, acc, right),
-            BinOp::Gt => astb!(Gt, acc, right),
-            BinOp::Le => astb!(Le, acc, right),
-            BinOp::Ge => astb!(Ge, acc, right),
-            BinOp::Ne => astb!(Ne, acc, right),
-            BinOp::Eq => astb!(Eq, acc, right),
-            BinOp::And => astb!(And, acc, right),
-            BinOp::Or => astb!(Or, acc, right),
+            Concat => astmr!(Concat, acc, right),
+            Lsh => astmr!(Lsh, acc, right),
+            Rsh => astmr!(Rsh, acc, right),
+            BitAnd => astmr!(BitAnd, acc, right),
+            BitXor => astmr!(BitXor, acc, right),
+            BitOr => astmr!(BitOr, acc, right),
+            Lt => astmr!(Lt, acc, right),
+            Gt => astmr!(Gt, acc, right),
+            Le => astmr!(Le, acc, right),
+            Ge => astmr!(Ge, acc, right),
+            Ne => astmr!(Ne, acc, right),
+            Eq => astmr!(Eq, acc, right),
+            And => astmr!(And, acc, right),
+            Or => astmr!(Or, acc, right),
         }
     })
 }
@@ -144,11 +121,4 @@ named!(pub unop<UnOp>, alt!(
     ws!(tag!("-"))    => { |_| UnOp::UMin } |
     ws!(tag!("~"))    => { |_| UnOp::BinNot }
 ));
-
-#[derive(Debug)]
-pub enum UnOp {
-    Not,
-    Len,
-    UMin,
-    BinNot,
-}
+*/
