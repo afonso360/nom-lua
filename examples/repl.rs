@@ -13,17 +13,25 @@ fn exec_repl() {
     let stdin = std::io::stdin();
     let stdout = std::io::stdout();
     for line in stdin.lock().lines() {
-        if let nom_lua::IResult::Done(_, string) =
-            nom_lua::parse_chunk(line.expect("Failed to read line").as_bytes()) {
-            println!("EVAL: {}", string);
-        } else {
-            println!("ERROR: Parse Error");
-        }
+        //if let nom_lua::IResult::Done(_, string) =
+        //    nom_lua::parse_chunk(line.expect("Failed to read line").as_bytes()) {
+        //    println!("EVAL: {}", string);
+        //} else {
+        //    println!("ERROR: Parse Error");
+        //}
         print!("> ");
         stdout.lock().flush().expect("Failed to flush");
     }
 }
+fn exec_direct(arg: String) {
+
+}
 
 fn main() {
-    exec_repl();
+    let string = std::env::args().nth(2);
+    if let Some(c) = string {
+        exec_direct(c);
+    } else {
+        exec_repl();
+    }
 }

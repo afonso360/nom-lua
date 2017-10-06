@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![feature(specialization)]
+
 //#![deny(missing_docs)]
 //#![deny(warnings)]
 #![doc(test(attr(allow(unused_variables), deny(warnings))))]
@@ -13,11 +15,9 @@
 // TODO: Remove this
 #![allow(unused_macros, unused_imports)]
 
+
 #[macro_use]
 extern crate nom;
-
-#[cfg(feature="graphviz")]
-extern crate dot;
 
 #[cfg(test)]
 #[macro_use]
@@ -27,26 +27,28 @@ extern crate quickcheck;
 // https://www.lua.org/manual/5.3/manual.html#9
 
 
-use function::parse_block;
-pub use ast::ASTNode;
-use std::io::Read;
-
 #[macro_use]
 mod macros;
-
-pub mod ast;
-pub mod op;
-pub mod number;
-pub mod exp;
-pub mod string;
-pub mod name;
-pub mod var;
-pub mod field;
-pub mod statement;
-pub mod function;
+mod lexer;
 
 pub use nom::IResult;
 
+use lexer::{lex, Token};
+
+// TODO: Implement our own Error type
+pub fn lex_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<Vec<Token<'a>>> {
+    match lex(s.into()) {
+        IResult::Done(_, a) => Some(a),
+        _ => None
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+}
+
+/*
 //named!(pub parse_chunk<ASTNode>, ws!(parse_block));
 use exp::parse_exp;
 named!(pub parse_chunk<ASTNode>, dbg_dmp!(ws!(parse_exp)));
@@ -68,3 +70,4 @@ pub fn parse<T: Read>(mut s: T) -> Option<ASTNode> {
         _ => None
     }
 }
+*/

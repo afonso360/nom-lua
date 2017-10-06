@@ -30,6 +30,8 @@ appveyor = { repository = "afonso360/nom-lua" }
 
 [dependencies]
 nom = "^3.2"
+# wait until the no default-features issue is fixed
+# nom = { version = "^3.2", default-features = false } # https://github.com/Geal/nom/pull/537
 dot = { version = "^0.1", optional = true }
 
 [dev-dependencies]
@@ -42,3 +44,6 @@ name = "nom_lua"
 [[example]]
 name = "graphviz"
 required-features = ["graphviz"]
+
+[[example]]
+name = "repl"
