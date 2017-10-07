@@ -47,7 +47,7 @@ fn parse_int(b: &mut Bencher) {
 fn parse_float(b: &mut Bencher) {
     let ints: Vec<String> =
         test::black_box((0..32)
-                        .map(|i| format!("{}", i as f32).to_string())
+                        .map(|i| format!("{}", i as f64).to_string())
                         .collect());
 
     b.iter(|| {

@@ -29,7 +29,7 @@ extern crate quickcheck;
 
 #[macro_use]
 mod macros;
-mod number;
+pub mod number;
 
 pub use nom::IResult;
 
