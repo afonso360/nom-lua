@@ -57,11 +57,49 @@ named!(parse_float<Number>,
       );
 
 
-//named!(parse_hex_float<Number>, map_res!(apply!(parse_hexf64, false), |_| Number::Float(0.0f)));
+fn build_hex_float(((dec, frac), exp): ((Option<&[u8]>, Option<&[u8]>), Option<&[u8]>)) -> Number {
+    use self::Number::Float;
 
+    if let Some(x) = dec {
+        return Float(
+            FromStr::from_str(
+                str::from_utf8(x).expect("Invalid utf8")
+            ).expect("Invalid f64")
+        )
+    }
+    Float(0.0)
+}
+
+named!(parse_hex_float_exp<&[u8]>, recognize!(do_parse!(
+               alt!(tag!("p") | tag!("P"))
+            >> opt!(alt!(tag!("+") | tag!("-")))
+            >> d: hex_digit
+            >> (d))));
+
+
+named!(parse_hex_float<Number>, do_parse!(
+       preceded!(tag!("0"), alt!(tag!("x") | tag!("X")))
+    >> main: alt!(
+           do_parse!(
+                  d: hex_digit
+               >> tag!(".")
+               >> f: opt!(complete!(hex_digit))
+               >> ((Some(d), f))
+            ) |
+           do_parse!(
+                  d: opt!(hex_digit)
+               >> tag!(".")
+               >> f: hex_digit
+               >> ((d, Some(f)))
+            ) |
+           do_parse!(d: hex_digit >> ((Some(d), None)))
+       )
+    >> exp: opt!(complete!(parse_float_exp))
+    >> (build_hex_float((main, exp)))
+));
 
 named!(pub parse_number<Number>, dbg_dmp!(alt!(
-            //complete!(parse_hex_float) |
+            complete!(parse_hex_float) |
             complete!(parse_hex_int) |
             complete!(parse_float) |
             parse_int |
@@ -112,6 +150,15 @@ mod tests {
     ast_panic_test!(parse_float_14, parse_float, "+20.0");
 
     ast_test!(parse_float_15, parse_float, format!("{:.64}", 1.0), ast!(Float, 1.0));
+
+
+    ast_test!(parse_hex_float_1, parse_hex_float, "0x1.0", ast!(Float, 1.0));
+    //ast_test!(parse_hex_float_2, parse_hex_float, "0xFF.0p0", ast!(Float, 255.0));
+    //ast_test!(parse_hex_float_3, parse_hex_float, "0x0.1E", ast!(Float, 0.1171875));
+    ast_test!(parse_hex_float_4, parse_hex_float, "0x0.p1", ast!(Float, 0.0));
+    ast_test!(parse_hex_float_5, parse_hex_float, "0X0.", ast!(Float, 0.0));
+    //ast_test!(parse_hex_float_6, parse_hex_float, "0X0.p11323123", ast!(Float, 0.0));
+    //ast_test!(parse_hex_float_7, parse_hex_float, "0x1.9f1a12718ed76p-67", ast!(Float, 1.0987654321e-20));
 
     ast_test!(parse_number_1, parse_number, "20", ast!(Integer, 20));
     ast_test!(parse_number_2, parse_number, "20.0", ast!(Float, 20.0));
