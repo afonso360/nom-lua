@@ -29,19 +29,9 @@ extern crate quickcheck;
 
 #[macro_use]
 mod macros;
-mod lexer;
+mod number;
 
 pub use nom::IResult;
-
-use lexer::{lex, Token};
-
-// TODO: Implement our own Error type
-pub fn lex_string<'a, T: Into<&'a [u8]>>(s: T) -> Option<Vec<Token<'a>>> {
-    match lex(s.into()) {
-        IResult::Done(_, a) => Some(a),
-        _ => None
-    }
-}
 
 
 #[cfg(test)]
